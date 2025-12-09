@@ -1,0 +1,106 @@
+/*Roboto Font Import Style*/
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+/*---BASE WEBSITE CSS---*/
+
+#root {
+  font-family: 'Roboto', sans-serif;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 auto;
+  text-align: center;
+  background: #f2f2f2;
+}
+
+html,
+body {
+  background: #f2f2f2;
+  display: grid;
+  place-items: center;
+}
+
+/*---NAVIGATION CSS---*/
+
+/*Spacing for elements below nav*/
+.pt-10 {
+  padding-top: 7rem;
+}
+
+/*Some nav bar stylings*/
+.my-nav-bar {
+  background-color: #E53935 !important;
+}
+
+.my-nav-bar .nav-link {
+  color: white !important;
+}
+
+.my-nav-bar .navbar-brand {
+  color: white !important;
+  font-weight: 500;
+}
+
+#nav {
+  display: none;
+}
+
+/*---LOGIN PAGE UI---*/
+
+#loginLogo {
+  background-color: #E53935;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.loginContainer {
+  width: auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.loginContainer text {
+  font-size: 18px;
+  margin-top: 1rem;
+}
+
+.input {
+  text-align: left;
+  margin-top: 1rem;
+}
+
+.input input {
+  width: 14rem;
+  margin-top: 0.5rem;
+  border: 2px solid grey;
+  border-radius: 10px;
+  padding: 5px 10px;
+  outline: none;
+}
+
+.input input:focus {
+  border: 2px solid #E53935;
+}
+
+.input text {
+  font-size: 18px;
+  font-weight: 450;
+}
+
+#loginBtn {
+  font-family: 'Roboto', sans-serif;
+  margin-top: 1rem;
+  background: #E53935;
+  color: white;
+  font-weight: 500;
+  padding: 8px 16px;
+  font-size: 18px;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+}
