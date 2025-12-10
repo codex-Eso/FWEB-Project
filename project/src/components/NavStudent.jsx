@@ -1,8 +1,13 @@
 import { Navbar, Nav, Container } from 'react-bootstrap'
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 import logo from "../assets/Logo.png"
 
-const MyNavBar = () => {
+const NavStudent = () => {
+    const navigate = useNavigate();
+    const logout = () => {
+        localStorage.removeItem("loginRole");
+        navigate("/")
+    }
     return (
         <Navbar className='my-nav-bar' variant='dark' expand="lg" fixed="top">
             <Container>
@@ -10,11 +15,9 @@ const MyNavBar = () => {
                 <Navbar.Toggle></Navbar.Toggle>
                 <Navbar.Collapse>
                     <Nav className='me-auto'>
-                        <Nav.Link as={Link} to="/inventory">Your Books</Nav.Link>
-                        <Nav.Link as={Link} to="/logs">Audit Log</Nav.Link>
-                        <Nav.Link as={Link} to="/notification">Notification</Nav.Link>
-                        <Nav.Link as={Link} to="/addBook">Add Book</Nav.Link>
-                        <Nav.Link as={Link} to="/">Logout</Nav.Link>
+                        <Nav.Link as={Link} to="/student/inventory">Your Books</Nav.Link>
+                        <Nav.Link as={Link} to="/student/notification">Notification</Nav.Link>
+                        <Nav.Link onClick={logout}>Logout</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container>
@@ -22,4 +25,4 @@ const MyNavBar = () => {
     )
 }
 
-export default MyNavBar
+export default NavStudent

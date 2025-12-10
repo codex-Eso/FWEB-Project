@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router'
+import { Routes, Route, useNavigate } from 'react-router'
+import { useState, useEffect } from 'react'
 
 import AddBook from './pages/AddBook'
 import AuditLog from './pages/AuditLog'
@@ -7,14 +8,28 @@ import Inventory from './pages/Inventory'
 import Notification from './pages/Notification'
 import Student from './pages/Student'
 import Admin from './pages/Admin'
-import MyNavBar from './components/Nav'
+import NavStudent from './components/NavStudent'
 import NotFound from './pages/NotFound'
 import './App.css'
+import NavAdmin from './components/NavAdmin'
 
 function App() {
+  const [role, getRole] = useState(localStorage.getItem("loginRole"));
+  const navigate = useNavigate();
+  useEffect(() => {
+    const loginRole = localStorage.getItem("loginRole")
+    if (loginRole) {
+      getRole(loginRole)
+    } else {
+      navigate("/");
+    }
+  }, [navigate])
   return (
     <>
-      <span id='nav'><MyNavBar /></span>
+      <div id='nav'>
+        {role === "student" && <NavStudent />}
+        {role === "admin" && <NavAdmin />}
+      </div>
       <div id='element' className='pt-5 text-center'>
         <Routes id="routes">
           {/*

@@ -3,7 +3,6 @@ import { useState } from "react"
 import logo from "../assets/Logo.png"
 
 const Authentication = () => {
-    localStorage.removeItem("loginUser") //remove the previous login state upon entering this page
     setTimeout(() => {
         const nav = document.getElementById("nav")
         const element = document.getElementById("element")
@@ -38,11 +37,11 @@ const Authentication = () => {
             <button id="loginBtn" onClick={() => {
                 if (user.adminNo === "" && user.password === "") {
                     navigate("/student")
-                    localStorage.setItem("loginUser", "student");
+                    localStorage.setItem("loginRole", "student");
                     userPageStyle();
                 } else {
                     navigate("/admin")
-                    localStorage.setItem("loginUser", "admin");
+                    localStorage.setItem("loginRole", "admin");
                     userPageStyle();
                 }//login for admin/user upon login
                 //MUST MAKE LOGIC BETTER
