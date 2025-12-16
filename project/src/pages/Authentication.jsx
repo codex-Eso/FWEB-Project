@@ -1,12 +1,48 @@
 import { useNavigate } from "react-router-dom"
-import { useState } from "react"
 import logo from "../assets/Logo.png"
+import { useEffect, useState } from "react";
 
 const Authentication = () => {
     const [user, getUser] = useState({
         adminNo: "",
         password: ""
     });
+    const [actualUser, setUser] = useState({});
+    useEffect(() => {
+        const checkLogin = async () => {
+            try {
+                const res = await fetch("http://localhost:5050/users");
+                if (!res.ok) throw new Error("Failed to get users! Try again later!");
+                const data = await res.json();
+                setUser(data);
+            } catch (e) {
+                if (e === "Failed to get users! Try again later!") alert(e);
+            }
+        }
+        checkLogin();
+    })
+    const loginBtn = () => {
+        const loggedIn = false;
+        actualUser.map((u) => {
+            //since the admin has only 1 shared account, I just check if it equals to the credentials for the very first array
+            if (user.adminNo === u.username === "AdminUser2025" && user.password === u.password === "Admin_is_user_2025") {
+                localStorage.setItem("loginRole", "admin");
+                loggedIn = true;
+                navigate("/admin");
+                return
+            } else if (user.adminNo === u.username && user.password === u.password) {
+                localStorage.setItem("loginRole", "student");
+                localStorage.setItem("userId", u.id);
+                navigate("/student");
+                loggedIn = true;
+                return
+            }
+        })
+        if (!loggedIn) {
+            alert("Invalid Login Credentials. Try Again.")
+        }
+        //login for admin/user upon login
+    }
     const navigate = useNavigate();
     return (
         //login UI
@@ -24,16 +60,7 @@ const Authentication = () => {
                 <br></br>
                 <input id="password" type="password" placeholder="Enter password" onChange={(e) => getUser({ ...user, password: e.target.value })}></input>
             </div>
-            <button id="loginBtn" onClick={() => {
-                if (user.adminNo === "" && user.password === "") {
-                    navigate("/student")
-                    localStorage.setItem("loginRole", "student");
-                } else {
-                    navigate("/admin")
-                    localStorage.setItem("loginRole", "admin");
-                }//login for admin/user upon login
-                //MUST MAKE LOGIC BETTER
-            }}>
+            <button id="loginBtn" onClick={loginBtn}>
                 Login
             </button>
         </div>

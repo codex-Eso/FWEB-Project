@@ -8,9 +8,9 @@
             "copies": 2,
             "title": "Norse Mythology",
             "author": "Desmond Lee",
-            "bookImage": "../assets/bookImgs/B1.png",
+            "bookImage": "/bookImgs/B1.png",
             "publisher": "London: Hamlyn",
-            "imgLocation": "../assets/bookLoc/B1.png",
+            "imgLocation": "/bookLoc/B1.png",
             "level": 6
         },
         {
@@ -21,9 +21,9 @@
             "copies": 1,
             "title": "Studies",
             "author": "Poppy Pop",
-            "bookImage": "../assets/bookImgs/B2.png",
+            "bookImage": "/bookImgs/B2.png",
             "publisher": "America: Brooklyn",
-            "imgLocation": "../assets/bookLoc/B2.png",
+            "imgLocation": "/bookLoc/B2.png",
             "level": 0
         },
         {
@@ -34,9 +34,9 @@
             "copies": 1,
             "title": "History of Singapore",
             "author": "Jospeh Schooling",
-            "bookImage": "../assets/bookImgs/B3.png",
+            "bookImage": "/bookImgs/B3.png",
             "publisher": "Singapore: Singapore",
-            "imgLocation": "../assets/bookLoc/B3.png",
+            "imgLocation": "/bookLoc/B3.png",
             "level": 7
         },
         {
@@ -47,9 +47,9 @@
             "copies": 3,
             "title": "Book of Nothing",
             "author": "Unknown Tan",
-            "bookImage": "../assets/bookImgs/B4.png",
+            "bookImage": "/bookImgs/B4.png",
             "publisher": "Australia: Australia",
-            "imgLocation": "../assets/bookLoc/B4.png",
+            "imgLocation": "/bookLoc/B4.png",
             "level": 0
         },
         {
@@ -60,9 +60,9 @@
             "copies": 2,
             "title": "Gaming History for Dummies",
             "author": "Gabriel Tan",
-            "bookImage": "../assets/bookImgs/B5.png",
+            "bookImage": "/bookImgs/B5.png",
             "publisher": "China: Shanghai",
-            "imgLocation": "../assets/bookLoc/B5.png",
+            "imgLocation": "/bookLoc/B5.png",
             "level": 6
         },
         {
@@ -73,9 +73,9 @@
             "copies": 1,
             "title": "Biography",
             "author": "Professor Low",
-            "bookImage": "../assets/bookImgs/B6.png",
+            "bookImage": "/bookImgs/B6.png",
             "publisher": "Singapore: Singapore",
-            "imgLocation": "../assets/bookLoc/B6.png",
+            "imgLocation": "/bookLoc/B6.png",
             "level": 8
         }
     ],
@@ -91,6 +91,12 @@
             "name": "Student A",
             "username": "2402411I",
             "password": "its_esmond_21"
+        },
+        {
+            "id": "U3",
+            "name": "Student B",
+            "username": "2300161E",
+            "password": "tester_1234"
         }
     ],
     "adminLogs": [],
@@ -117,6 +123,13 @@
                 "",
                 ""
             ]
+        },
+        {
+            "id": "UB2",
+            "studentId": "U3",
+            "booksIds": [],
+            "status": [],
+            "dueDate": []
         }
     ],
     "adminBooks": [

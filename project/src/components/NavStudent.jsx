@@ -6,7 +6,8 @@ const NavStudent = () => {
     const navigate = useNavigate();
     const logout = () => {
         localStorage.removeItem("loginRole");
-        navigate("/")
+        localStorage.removeItem("userId");
+        navigate("/");
     }
     return (
         <Navbar className='my-nav-bar' variant='dark' expand="lg" fixed="top">

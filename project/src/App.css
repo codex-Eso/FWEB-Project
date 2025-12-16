@@ -5,11 +5,13 @@
 
 #root {
   font-family: 'Roboto', sans-serif;
-  max-width: 1280px;
+  width: auto;
   margin: 0 auto;
   padding: 0 auto;
   text-align: center;
   background: #f2f2f2;
+  display: flex;
+  justify-content: center;
 }
 
 html,
@@ -21,6 +23,11 @@ body {
 
 text {
   font-family: 'Roboto', sans-serif;
+}
+
+.Stacks {
+  width: 100vw;
+  padding: 0 2rem;
 }
 
 /*---NAVIGATION CSS---*/
@@ -57,7 +64,7 @@ text {
 }
 
 .loginContainer {
-  width: auto;
+  width: 25vw;
   padding: 2rem;
   background: white;
   border-radius: 20px;
@@ -133,4 +140,26 @@ text {
 
 #searchBar img {
   margin-left: 3rem;
+}
+
+/*---Recently Viewed Containers---*/
+
+.viewBooks {
+  gap: 20vw;
+}
+
+.ViewedBox {
+  border: 3px solid black;
+  width: auto;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.ViewedBox img {
+  width: 120px;
+  height: 160px;
+  border-radius: 10px;
 }
