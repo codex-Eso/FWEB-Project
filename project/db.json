@@ -12,6 +12,71 @@
             "publisher": "London: Hamlyn",
             "imgLocation": "../assets/bookLoc/B1.png",
             "level": 6
+        },
+        {
+            "id": "B2",
+            "location": "Closed Stacks",
+            "availability": false,
+            "identifier": 9115092636,
+            "copies": 1,
+            "title": "Studies",
+            "author": "Poppy Pop",
+            "bookImage": "../assets/bookImgs/B2.png",
+            "publisher": "America: Brooklyn",
+            "imgLocation": "../assets/bookLoc/B2.png",
+            "level": 0
+        },
+        {
+            "id": "B3",
+            "location": "Level 7, Row 12, Bay 3",
+            "availability": false,
+            "identifier": 6667156234,
+            "copies": 1,
+            "title": "History of Singapore",
+            "author": "Jospeh Schooling",
+            "bookImage": "../assets/bookImgs/B3.png",
+            "publisher": "Singapore: Singapore",
+            "imgLocation": "../assets/bookLoc/B3.png",
+            "level": 7
+        },
+        {
+            "id": "B4",
+            "location": "Closed Stacks",
+            "availability": true,
+            "identifier": 7437004567,
+            "copies": 3,
+            "title": "Book of Nothing",
+            "author": "Unknown Tan",
+            "bookImage": "../assets/bookImgs/B4.png",
+            "publisher": "Australia: Australia",
+            "imgLocation": "../assets/bookLoc/B4.png",
+            "level": 0
+        },
+        {
+            "id": "B5",
+            "location": "Level 6, Row 9, Bay 3",
+            "availability": true,
+            "identifier": 6945606555,
+            "copies": 2,
+            "title": "Gaming History for Dummies",
+            "author": "Gabriel Tan",
+            "bookImage": "../assets/bookImgs/B5.png",
+            "publisher": "China: Shanghai",
+            "imgLocation": "../assets/bookLoc/B5.png",
+            "level": 6
+        },
+        {
+            "id": "B6",
+            "location": "Level 8, Row 13, Bay 1",
+            "availability": true,
+            "identifier": 4561234707,
+            "copies": 1,
+            "title": "Biography",
+            "author": "Professor Low",
+            "bookImage": "../assets/bookImgs/B6.png",
+            "publisher": "Singapore: Singapore",
+            "imgLocation": "../assets/bookLoc/B6.png",
+            "level": 8
         }
     ],
     "users": [
@@ -54,5 +119,15 @@
             ]
         }
     ],
-    "adminBooks": []
+    "adminBooks": [
+        {
+            "bookIds": [
+                "B6",
+                "B4",
+                "B1",
+                "B2",
+                "B3"
+            ]
+        }
+    ]
 }
