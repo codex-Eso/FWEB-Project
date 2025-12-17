@@ -1,5 +1,5 @@
 import { Navbar, Nav, Container } from 'react-bootstrap'
-import { Link, useNavigate } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 import logo from "../assets/Logo.png"
 
 const NavAdmin = () => {
@@ -15,8 +15,9 @@ const NavAdmin = () => {
                 <Navbar.Toggle></Navbar.Toggle>
                 <Navbar.Collapse>
                     <Nav className='me-auto'>
-                        <Nav.Link as={Link} to="/admin/logs">Audit Log</Nav.Link>
-                        <Nav.Link as={Link} to="/admin/addBook">Add Book</Nav.Link>
+                        <Nav.Link as={NavLink} to="/admin" end>Home</Nav.Link>
+                        <Nav.Link as={NavLink} to="/admin/logs">Audit Log</Nav.Link>
+                        <Nav.Link as={NavLink} to="/admin/addBook">Add Book</Nav.Link>
                         <Nav.Link onClick={logout}>Logout</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>

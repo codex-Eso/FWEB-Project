@@ -1,17 +1,19 @@
 import searchIcon from "../assets/Search.png"
 import Stack from "react-bootstrap/Stack"
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 const StudentHome = () => {
     const [books, setBooks] = useState({})
     const [allBooks, getBooks] = useState([])
     const [noOfBooks, getNumBooks] = useState(0)
+    const navigate = useNavigate()
     useEffect(() => {
         const getViewedBooks = async () => {
             try {
                 const res = await fetch(`http://localhost:5050/bookInventory`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
-                data = data.filter(u => u.studentId === "U2");
+                data = data.filter(u => u.studentId === localStorage.getItem("userId"));
                 setBooks(data[0]);
             } catch (e) {
                 if (e === "Failed to get books! Try again later!") alert(e);
@@ -35,13 +37,25 @@ const StudentHome = () => {
         const bookCount = books.status.filter(book => book === "Viewed").length;
         getNumBooks(bookCount);
     })
+    const navToBook = (id) => {
+        navigate(`book/${id}`);
+    }
+    var booksDisplay = 0;
     const viewedBooks = books.booksIds?.map((id, i) => {
+        if (booksDisplay === 3) return null;
         if (books.status[i] !== "Viewed") return null;
         const matchedBooks = allBooks.find(book => book.id === id);
         if (!matchedBooks) return null;
+        booksDisplay++;
         return (
-            <div className="ViewedBox" key={id}>
+            <div id="bookInfo" onClick={() => navToBook(matchedBooks.id)} className="ViewedBox" key={id}>
                 <img src={matchedBooks.bookImage} />
+                <div className="d-flex flex-column text-start fs-5 ps-3 viewBookText">
+                    <text>{matchedBooks.title}</text>
+                    <text>By {matchedBooks.author}</text>
+                    {matchedBooks.availability && <text className="text-success">Available</text>}
+                    {!matchedBooks.availability && <text className="text-danger">Unavailable</text>}
+                </div>
             </div>
         );
     });

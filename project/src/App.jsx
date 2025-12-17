@@ -11,6 +11,7 @@ import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
 import StudentHome from './pages/StudentHome'
 import AdminHome from './pages/AdminHome'
+import BookInfo from './pages/BookInfo'
 import './App.css'
 
 function App() {
@@ -40,11 +41,13 @@ function App() {
             <Route index element={<StudentHome />} />
             <Route path="inventory" element={<Inventory />} />
             <Route path="notification" element={<Notification />} />
+            <Route path="book/:id" element={<BookInfo />} />
           </Route>
           <Route path="/admin" element={<Admin />}>
             <Route index element={<AdminHome />} />
             <Route path="logs" element={<AuditLog />} />
             <Route path="addBook" element={<AddBook />} />
+            <Route path="book/:id" element={<BookInfo />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

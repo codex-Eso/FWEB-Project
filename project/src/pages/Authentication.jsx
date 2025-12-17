@@ -22,10 +22,10 @@ const Authentication = () => {
         checkLogin();
     })
     const loginBtn = () => {
-        const loggedIn = false;
+        var loggedIn = false;
         actualUser.map((u) => {
             //since the admin has only 1 shared account, I just check if it equals to the credentials for the very first array
-            if (user.adminNo === u.username === "AdminUser2025" && user.password === u.password === "Admin_is_user_2025") {
+            if (user.adminNo === "AdminUser2025" && user.password === "Admin_is_user_2025") {
                 localStorage.setItem("loginRole", "admin");
                 loggedIn = true;
                 navigate("/admin");
