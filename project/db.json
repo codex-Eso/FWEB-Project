@@ -18,12 +18,11 @@
             "location": "Closed Stacks",
             "availability": false,
             "identifier": 9115092636,
-            "copies": 1,
+            "copies": 0,
             "title": "Studies",
             "author": "Poppy Pop",
             "bookImage": "/bookImgs/B2.png",
             "publisher": "America: Brooklyn",
-            "imgLocation": "/bookLoc/B2.png",
             "level": 0
         },
         {
@@ -31,7 +30,7 @@
             "location": "Level 7, Row 12, Bay 3",
             "availability": false,
             "identifier": 6667156234,
-            "copies": 1,
+            "copies": 0,
             "title": "History of Singapore",
             "author": "Jospeh Schooling",
             "bookImage": "/bookImgs/B3.png",
@@ -49,7 +48,6 @@
             "author": "Unknown Tan",
             "bookImage": "/bookImgs/B4.png",
             "publisher": "Australia: Australia",
-            "imgLocation": "/bookLoc/B4.png",
             "level": 0
         },
         {
@@ -122,14 +120,18 @@
                 "2026-02-20T18:00:00Z",
                 "",
                 ""
-            ]
+            ],
+            "borrowed": 1,
+            "requested": 0
         },
         {
             "id": "UB2",
             "studentId": "U3",
             "booksIds": [],
             "status": [],
-            "dueDate": []
+            "dueDate": [],
+            "borrowed": 0,
+            "requested": 0
         }
     ],
     "adminBooks": [

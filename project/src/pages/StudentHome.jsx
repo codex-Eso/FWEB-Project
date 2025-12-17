@@ -34,7 +34,7 @@ const StudentHome = () => {
     }, []);
     useEffect(() => {
         if (!books.booksIds) return;
-        const bookCount = books.status.filter(book => book === "Viewed").length;
+        const bookCount = books.booksIds.length;
         getNumBooks(bookCount);
     })
     const navToBook = (id) => {
@@ -74,14 +74,16 @@ const StudentHome = () => {
                 <h3>Your Collection:</h3>
             </div>
             <br />
-            <div className="d-flex align-items-center mb-2">
-                <h4>Recently Viewed:</h4>
-                {noOfBooks > 3 && <h4 className="text-decoration-underline ms-auto">View All</h4>}
-            </div>
-            <Stack className="viewBooks" direction="horizontal">
-                {!viewedBooks && <div className="d-flex justify-content-center align-items-center w-100 mt-3 gap-3" direction="horizontal"><div className="spinner-grow"></div><div className="spinner-grow"></div><div className="spinner-grow"></div></div>}
-                {viewedBooks}
-            </Stack>
+            {
+                booksDisplay !== 0 ? <><div className="d-flex align-items-center mb-2">
+                    <h4>Recently Viewed:</h4>
+                    {noOfBooks > 3 && <h4 onClick={() => { navigate("inventory") }} className="text-decoration-underline ms-auto viewAll">View All</h4>}
+                </div>
+                    <Stack className="viewBooks" direction="horizontal">
+                        {!viewedBooks && <div className="d-flex justify-content-center align-items-center w-100 mt-3 gap-3" direction="horizontal"><div className="spinner-grow"></div><div className="spinner-grow"></div><div className="spinner-grow"></div></div>}
+                        {viewedBooks}
+                    </Stack></> : <>Oops no books :((</> //editing this later
+            }
         </Stack>
     )
 }

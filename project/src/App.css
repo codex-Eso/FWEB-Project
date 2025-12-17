@@ -178,6 +178,10 @@ text {
   position: relative;
 }
 
+.viewAll {
+  cursor: pointer;
+}
+
 .info-text text {
   margin: 2% 0;
 }
@@ -189,6 +193,7 @@ text {
   font-weight: 500;
   padding: 6px 40px;
   border-radius: 20px;
+  outline: none;
 }
 
 #exitBook {
