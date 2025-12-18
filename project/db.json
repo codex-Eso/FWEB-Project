@@ -104,23 +104,23 @@
       "id": "UB1",
       "studentId": "U2",
       "booksIds": [
-        "B5",
         "B1",
         "B6",
+        "B5",
         "B4",
         "B3"
       ],
       "status": [
+        "Borrowed",
+        "Borrowed",
         "Requested",
-        "Borrowed",
-        "Borrowed",
         "Borrowed",
         "Viewed"
       ],
       "dueDate": [
         "",
-        "",
         "2026-01-15T15:09:03.210Z",
+        "",
         "2026-01-15T13:43:36.523Z",
         "",
         "2026-01-15T15:04:09.647Z",

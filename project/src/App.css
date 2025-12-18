@@ -19,6 +19,7 @@ body {
   background: #f2f2f2;
   display: grid;
   place-items: center;
+  overflow: hidden;
 }
 
 text {
@@ -72,7 +73,6 @@ text {
   padding: 2rem;
   background: white;
   border-radius: 20px;
-  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -220,4 +220,10 @@ text {
   width: 160px;
   max-height: 180px;
   border-radius: 10px;
+}
+
+/*---Search Containers/Elements---*/
+
+#filterSearch {
+  outline: none;
 }

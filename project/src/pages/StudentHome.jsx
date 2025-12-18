@@ -6,6 +6,7 @@ const StudentHome = () => {
     const [books, setBooks] = useState({})
     const [allBooks, getBooks] = useState([])
     const [noOfBooks, getNumBooks] = useState(0)
+    const [searchQuery, setSearchQuery] = useState("");
     const navigate = useNavigate()
     useEffect(() => {
         const getViewedBooks = async () => {
@@ -31,7 +32,7 @@ const StudentHome = () => {
         }
         getViewedBooks();
         getAllBooks();
-    });
+    }, []);
     useEffect(() => {
         if (!books.booksIds) return;
         const bookCount = books.booksIds.length;
@@ -58,32 +59,51 @@ const StudentHome = () => {
             </div>
         );
     });
+    const searchedBooks = (event) => {
+        const search = event.target.value.toLowerCase();
+        setSearchQuery(search);
+        const results = allBooks.filter(book => book.title.toLowerCase().includes(search) || book.author.toLowerCase().includes(search) || book.publisher.toLowerCase().includes(search));
+    };
+    // const displayResults = booksToDisplay.map((i) => {
+
+    // })
+    //search query has been even more simplified
+    //it will now just display the closest result based on the book's name + author + publisher upon enter key
     return (
         <Stack className="Stacks">
             <div>
                 <label htmlFor="searchBook">
                     <div id="searchBar">
                         <img src={searchIcon} width="30" height="30" />
-                        <input placeholder="Search for library books..." id="searchBook"></input>
+                        <input placeholder="Search for library books..." id="searchBook" onKeyDown={(e) => { if (e.key === "Enter") searchedBooks(e) }}></input>
                     </div>
                 </label>
-            </div>
+            </div >
             <br />
-            <div className="d-flex justify-content-start">
+            {!searchQuery ? <><div className="d-flex justify-content-start">
                 <h3>Your Collection:</h3>
             </div>
-            <br />
-            {
-                booksDisplay !== 0 ? <><div className="d-flex align-items-center mb-2">
-                    <h4>Recently Viewed:</h4>
-                    {noOfBooks > 3 && <h4 onClick={() => { navigate("inventory") }} className="text-decoration-underline ms-auto viewAll">View All</h4>}
-                </div>
-                    <Stack className="viewBooks" direction="horizontal">
-                        {!viewedBooks && <div className="d-flex justify-content-center align-items-center w-100 mt-3 gap-3" direction="horizontal"><div className="spinner-grow"></div><div className="spinner-grow"></div><div className="spinner-grow"></div></div>}
-                        {viewedBooks}
-                    </Stack></> : <>Oops no books :((</> //editing this later
-            }
-        </Stack>
+                <br />
+                {
+                    booksDisplay !== 0 ? <><div className="d-flex align-items-center mb-2">
+                        <h4>Recently Viewed:</h4>
+                        {noOfBooks > 3 && <h4 onClick={() => { navigate("inventory") }} className="text-decoration-underline ms-auto viewAll">View All</h4>}
+                    </div>
+                        <Stack className="viewBooks" direction="horizontal">
+                            {!viewedBooks && <div className="d-flex justify-content-center align-items-center w-100 mt-3 gap-3" direction="horizontal"><div className="spinner-grow"></div><div className="spinner-grow"></div><div className="spinner-grow"></div></div>}
+                            {viewedBooks}
+                        </Stack></> : <>Oops no books :((</> //editing this later
+                }</> : <><div className="d-flex justify-content-start align-items-center">
+                    <h3>Search Results:</h3><button className="border-0 ms-auto d-flex align-items-center" id="filterSearch" data-bs-toggle="dropdown"><h3>Filter By:</h3>
+                    </button>
+                    <ul className="dropdown-menu" aria-labelledby="filterSearch">
+                        <li><a type="button" className="dropdown-item" id="availability">Availability</a></li>
+                        <li><a type="button" className="dropdown-item" id="lvl6">Level 6</a></li>
+                        <li><a type="button" className="dropdown-item" id="lvl7">Level 7</a></li>
+                        <li><a type="button" className="dropdown-item" id="lvl7">Level 8</a></li>
+                    </ul>
+                </div></>}
+        </Stack >
     )
 }
 

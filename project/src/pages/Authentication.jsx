@@ -53,12 +53,12 @@ const Authentication = () => {
             <div className="input">
                 <text>Admin Number:</text>
                 <br></br>
-                <input id="adminNo" type="text" placeholder="E.g.: 2400000E" onChange={(e) => getUser({ ...user, adminNo: e.target.value })}></input>
+                <input id="adminNo" type="text" placeholder="E.g.: 2400000E" onChange={(e) => getUser({ ...user, adminNo: e.target.value })} onKeyDown={(e) => { if (e.key === "Enter") loginBtn() }}></input>
             </div>
             <div className="input">
                 <text>Password:</text>
                 <br></br>
-                <input id="password" type="password" placeholder="Enter password" onChange={(e) => getUser({ ...user, password: e.target.value })}></input>
+                <input id="password" type="password" placeholder="Enter password" onChange={(e) => getUser({ ...user, password: e.target.value })} onKeyDown={(e) => { if (e.key === "Enter") loginBtn() }}></input>
             </div>
             <button id="loginBtn" onClick={loginBtn}>
                 Login
