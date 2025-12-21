@@ -4,6 +4,7 @@ import Stack from "react-bootstrap/esm/Stack";
 import Close from "../assets/Close.png";
 import Carousel from "react-bootstrap/Carousel";
 import { useNavigate } from "react-router-dom";
+import { getRole } from "../checkLogin";
 
 const BookInfo = () => {
     const { id } = useParams();
@@ -27,29 +28,47 @@ const BookInfo = () => {
     useEffect(() => {
         const getUserBooks = async () => {
             try {
-                const res = await fetch(`http://localhost:5050/bookInventory`);
-                if (!res.ok) throw new Error("Failed to get books! Try again later!");
-                let data = await res.json();
-                data = data.filter(u => u.studentId === localStorage.getItem("userId"));
-                const getBook = data[0].booksIds.indexOf(id);
-                if (getBook !== -1) {
-                    data[0].booksIds.splice(getBook, 1);
-                    data[0].booksIds.unshift(id);
-                    var getStatus = data[0].status.splice(getBook, 1);
-                    data[0].status.unshift(getStatus[0]);
-                    var getDueDate = data[0].dueDate.splice(getBook, 1);
-                    data[0].dueDate.unshift(getDueDate[0]);
-                } else {
-                    data[0].booksIds.unshift(id);
-                    data[0].status.unshift("Viewed");
-                    data[0].dueDate.unshift("");
+                if (getRole() === "admin") {
+                    const res = await fetch(`http://localhost:5050/adminBooks`);
+                    if (!res.ok) throw new Error("Failed to get books! Try again later!");
+                    let data = await res.json();
+                    const getBook = data[0].bookIds.indexOf(id);
+                    if (getBook !== -1) {
+                        data[0].bookIds.splice(getBook, 1);
+                        data[0].bookIds.unshift(id);
+                    } else {
+                        data[0].bookIds.unshift(id);
+                    }
+                    await fetch(`http://localhost:5050/adminBooks/AB1`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(data[0])
+                    });
+                } else if (getRole() === "student") {
+                    const res = await fetch(`http://localhost:5050/bookInventory`);
+                    if (!res.ok) throw new Error("Failed to get books! Try again later!");
+                    let data = await res.json();
+                    data = data.filter(u => u.studentId === localStorage.getItem("userId"));
+                    const getBook = data[0].booksIds.indexOf(id);
+                    if (getBook !== -1) {
+                        data[0].booksIds.splice(getBook, 1);
+                        data[0].booksIds.unshift(id);
+                        var getStatus = data[0].status.splice(getBook, 1);
+                        data[0].status.unshift(getStatus[0]);
+                        var getDueDate = data[0].dueDate.splice(getBook, 1);
+                        data[0].dueDate.unshift(getDueDate[0]);
+                    } else {
+                        data[0].booksIds.unshift(id);
+                        data[0].status.unshift("Viewed");
+                        data[0].dueDate.unshift("");
+                    }
+                    setBookState(data[0].status[0]);
+                    await fetch(`http://localhost:5050/bookInventory/${data[0].id}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(data[0])
+                    });
                 }
-                setBookState(data[0].status[0]);
-                await fetch(`http://localhost:5050/bookInventory/${data[0].id}`, {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data[0])
-                });
             } catch (e) {
                 alert(e);
             }
@@ -57,80 +76,84 @@ const BookInfo = () => {
         getUserBooks();
     }, [id])
     const action = (getAction) => {
-        //originally, I wanted to make request so that it works even if book is unavailable/copies = 0, but I don't want too make it too complex for my sake now...
-        if (!book.availability) {
-            alert("Cannot proceed! Book unavailable. Try again soon!");
-            return;
-        }
-        if (book.location === "Closed Stacks" && getAction === "Borrow") {
-            alert("Cannot proceed! Cannot borrow books from closed stacks!");
-            return;
-        }
-        if (bookState === "Viewed" || bookState === "Cancelled" || bookState === "Returned") {
-            if (getAction === "Borrow") {
-                //prompt to enter ISBN
-                const checkISBN = prompt("To confirm borrowing, please enter the book's ISBN:\n");
-                if (checkISBN == book.identifier) {
-                    const bookBorrowed = async () => {
-                        const tdyDate = new Date();
-                        let dueDate = new Date(tdyDate);
-                        dueDate.setDate(tdyDate.getDate() + 28);
-                        dueDate = dueDate.toISOString();
+        if (getRole() === "student") {
+            //originally, I wanted to make request so that it works even if book is unavailable/copies = 0, but I don't want too make it too complex for my sake now...
+            if (!book.availability) {
+                alert("Cannot proceed! Book unavailable. Try again soon!");
+                return;
+            }
+            if (book.location === "Closed Stacks" && getAction === "Borrow") {
+                alert("Cannot proceed! Cannot borrow books from closed stacks!");
+                return;
+            }
+            if (bookState === "Viewed" || bookState === "Cancelled" || bookState === "Returned") {
+                if (getAction === "Borrow") {
+                    //prompt to enter ISBN
+                    const checkISBN = prompt("To confirm borrowing, please enter the book's ISBN:\n");
+                    if (checkISBN == book.identifier) {
+                        const bookBorrowed = async () => {
+                            const tdyDate = new Date();
+                            let dueDate = new Date(tdyDate);
+                            dueDate.setDate(tdyDate.getDate() + 28);
+                            dueDate = dueDate.toISOString();
+                            const res = await fetch(`http://localhost:5050/bookInventory`);
+                            if (!res.ok) throw new Error("Failed to get books! Try again later!");
+                            let userBook = await res.json();
+                            userBook = userBook.filter(u => u.studentId === localStorage.getItem("userId"));
+                            let getId = userBook[0].booksIds.indexOf(id);
+                            userBook[0].status[getId] = "Borrowed";
+                            userBook[0].dueDate[getId] = dueDate;
+                            userBook[0].borrowed += 1;
+                            await fetch(`http://localhost:5050/bookInventory/${userBook[0].id}`, {
+                                method: "PATCH",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(userBook[0])
+                            });
+                            const updatedBook = { ...book };
+                            updatedBook.copies -= 1;
+                            if (updatedBook.copies === 0) updatedBook.availability = false;
+                            await fetch(`http://localhost:5050/libraryData/${id}`, {
+                                method: "PATCH",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(updatedBook)
+                            });
+                            actualBook(updatedBook);
+                        }
+                        bookBorrowed();
+                        alert("Borrowed successfully!");
+                    } else {
+                        alert("Cannot proceed! Invalid ISBN!");
+                    }
+                } else if (getAction === "Request") {
+                    const bookRequested = async () => {
                         const res = await fetch(`http://localhost:5050/bookInventory`);
                         if (!res.ok) throw new Error("Failed to get books! Try again later!");
                         let userBook = await res.json();
                         userBook = userBook.filter(u => u.studentId === localStorage.getItem("userId"));
                         let getId = userBook[0].booksIds.indexOf(id);
-                        userBook[0].status[getId] = "Borrowed";
-                        userBook[0].dueDate[getId] = dueDate;
-                        userBook[0].borrowed += 1;
+                        userBook[0].status[getId] = "Requested";
+                        userBook[0].requested += 1;
                         await fetch(`http://localhost:5050/bookInventory/${userBook[0].id}`, {
                             method: "PATCH",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify(userBook[0])
                         });
-                        const updatedBook = { ...book };
-                        updatedBook.copies -= 1;
-                        if (updatedBook.copies === 0) updatedBook.availability = false;
-                        await fetch(`http://localhost:5050/libraryData/${id}`, {
-                            method: "PATCH",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(updatedBook)
-                        });
-                        actualBook(updatedBook);
+                        setBookState("Requested");
                     }
-                    bookBorrowed();
-                    alert("Borrowed successfully!");
-                } else {
-                    alert("Cannot proceed! Invalid ISBN!");
+                    bookRequested();
+                    alert("Requested successfully!");
                 }
-            } else if (getAction === "Request") {
-                const bookRequested = async () => {
-                    const res = await fetch(`http://localhost:5050/bookInventory`);
-                    if (!res.ok) throw new Error("Failed to get books! Try again later!");
-                    let userBook = await res.json();
-                    userBook = userBook.filter(u => u.studentId === localStorage.getItem("userId"));
-                    let getId = userBook[0].booksIds.indexOf(id);
-                    userBook[0].status[getId] = "Requested";
-                    userBook[0].requested += 1;
-                    await fetch(`http://localhost:5050/bookInventory/${userBook[0].id}`, {
-                        method: "PATCH",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(userBook[0])
-                    });
-                    setBookState("Requested");
+            } else {
+                if (bookState === "Borrowed" || bookState === "Overdue") {
+                    alert("Cannot proceed! You still have the book in your possession!");
+                } else if (bookState === "Requested") {
+                    alert("Cannot proceed! Book has already been requested!");
+                } else if (bookState === "Collecting") {
+                    alert("Cannot proceed! The book is currently ready for your collection!");
                 }
-                bookRequested();
-                alert("Requested successfully!");
             }
-        } else {
-            if (bookState === "Borrowed" || bookState === "Overdue") {
-                alert("Cannot proceed! You still have the book in your possession!");
-            } else if (bookState === "Requested") {
-                alert("Cannot proceed! Book has already been requested!");
-            } else if (bookState === "Collecting") {
-                alert("Cannot proceed! The book is currently ready for your collection!");
-            }
+        } else if (getRole() === "admin") {
+
         }
     }
     return (
@@ -153,14 +176,21 @@ const BookInfo = () => {
                 <text>{book.location}</text>
                 {book.availability ? <text>Available</text> : <text>Unavailable</text>}
                 <text>Copies: {book.copies}</text>
-                <Stack gap={3} direction="horizontal" className="mt-1 actionBtns">
+                {getRole() === "student" ? <Stack gap={3} direction="horizontal" className="mt-1 actionBtns">
                     <button onClick={() => { action("Borrow") }}>
                         Borrow
                     </button>
                     <button onClick={() => { action("Request") }}>
                         Request
                     </button>
-                </Stack>
+                </Stack> : <Stack gap={3} direction="horizontal" className="mt-1 actionBtns">
+                    <button onClick={() => { action("Edit") }}>
+                        Edit
+                    </button>
+                    <button onClick={() => { action("Delete") }}>
+                        Delete
+                    </button>
+                </Stack>}
             </div>
         </div>
     )
