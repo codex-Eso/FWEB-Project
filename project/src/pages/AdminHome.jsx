@@ -2,12 +2,14 @@ import searchIcon from "../assets/Search.png"
 import Stack from "react-bootstrap/Stack"
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { overflow } from "../overflow";
 const AdminHome = () => {
     const [books, setBooks] = useState({})
     const [allBooks, getBooks] = useState([])
     const [searchQuery, setSearchQuery] = useState("");
     const [bookResults, getBookResults] = useState([]);
     const navigate = useNavigate()
+    useEffect(() => { overflow(false) }, []);
     useEffect(() => {
         const getViewedBooks = async () => {
             try {

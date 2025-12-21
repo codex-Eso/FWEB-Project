@@ -5,12 +5,16 @@ import Close from "../assets/Close.png";
 import Carousel from "react-bootstrap/Carousel";
 import { useNavigate } from "react-router-dom";
 import { getRole } from "../checkLogin";
+import { overflow } from "../overflow";
 
 const BookInfo = () => {
     const { id } = useParams();
     const [book, actualBook] = useState({});
     const [bookState, setBookState] = useState(null);
+    const [borrowedCount, setBorrowedCount] = useState(0);
+    const [requestedCount, setRequestedCount] = useState(0);
     const navigate = useNavigate();
+    useEffect(() => { overflow(false) }, []);
     useEffect(() => { }, [id]);
     useEffect(() => {
         const getBookInfo = async () => {
@@ -63,6 +67,8 @@ const BookInfo = () => {
                         data[0].dueDate.unshift("");
                     }
                     setBookState(data[0].status[0]);
+                    setBorrowedCount(data[0].borrowed);
+                    setRequestedCount(data[0].requested);
                     await fetch(`http://localhost:5050/bookInventory/${data[0].id}`, {
                         method: "PATCH",
                         headers: { "Content-Type": "application/json" },
@@ -77,17 +83,20 @@ const BookInfo = () => {
     }, [id])
     const action = (getAction) => {
         if (getRole() === "student") {
-            //originally, I wanted to make request so that it works even if book is unavailable/copies = 0, but I don't want too make it too complex for my sake now...
-            if (!book.availability) {
-                alert("Cannot proceed! Book unavailable. Try again soon!");
-                return;
-            }
             if (book.location === "Closed Stacks" && getAction === "Borrow") {
                 alert("Cannot proceed! Cannot borrow books from closed stacks!");
                 return;
             }
             if (bookState === "Viewed" || bookState === "Cancelled" || bookState === "Returned") {
                 if (getAction === "Borrow") {
+                    if (!book.availability) {
+                        alert("Cannot proceed! Book unavailable. Try again soon!");
+                        return;
+                    }
+                    if (borrowedCount === 30) {
+                        alert("Cannot proceed! You have exceeded your borrowing limits!");
+                        return;
+                    }
                     //prompt to enter ISBN
                     const checkISBN = prompt("To confirm borrowing, please enter the book's ISBN:\n");
                     if (checkISBN == book.identifier) {
@@ -125,6 +134,10 @@ const BookInfo = () => {
                         alert("Cannot proceed! Invalid ISBN!");
                     }
                 } else if (getAction === "Request") {
+                    if (requestedCount === 10) {
+                        alert("Cannot proceed! You have exceeded your requesting limits!");
+                        return;
+                    }
                     const bookRequested = async () => {
                         const res = await fetch(`http://localhost:5050/bookInventory`);
                         if (!res.ok) throw new Error("Failed to get books! Try again later!");

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import logo from "../assets/Logo.png"
 import { useEffect, useState } from "react";
+import { overflow } from "../overflow";
 
 const Authentication = () => {
     const [user, getUser] = useState({
@@ -8,6 +9,7 @@ const Authentication = () => {
         password: ""
     });
     const [actualUser, setUser] = useState({});
+    useEffect(() => { overflow(false) }, []);
     useEffect(() => {
         const checkLogin = async () => {
             try {

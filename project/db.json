@@ -55,7 +55,7 @@
       "location": "Level 6, Row 9, Bay 3",
       "availability": true,
       "identifier": 6945606555,
-      "copies": 2,
+      "copies": 1,
       "title": "Gaming History for Dummies",
       "author": "Gabriel Tan",
       "bookImage": "/bookImgs/B5.png",
@@ -75,6 +75,19 @@
       "publisher": "Singapore: Singapore",
       "imgLocation": "/bookLoc/B6.png",
       "level": 8
+    },
+    {
+      "id": "B7",
+      "location": "Level 7, Row 24, Bay 3",
+      "availability": true,
+      "identifier": 6967224891,
+      "copies": 3,
+      "title": "Tides",
+      "author": "Author Name",
+      "bookImage": "blob:http://localhost:5173/fd2db0a4-2300-4ede-af34-63962b1f3101",
+      "publisher": "New York: USA",
+      "imgLocation": "blob:http://localhost:5173/53503f16-b396-4b37-ab9f-2d54f72fa4f9",
+      "level": 7
     }
   ],
   "users": [
@@ -104,37 +117,31 @@
       "id": "UB1",
       "studentId": "U2",
       "booksIds": [
-        "B1",
-        "B6",
-        "bb1",
-        "B2",
-        "B5",
         "B4",
+        "B5",
+        "B7",
+        "B1",
+        "B2",
         "B3"
       ],
       "status": [
-        "Borrowed",
-        "Borrowed",
         "Viewed",
-        "Viewed",
+        "Borrowed",
         "Requested",
-        "Borrowed",
-        "Viewed"
+        "Viewed",
+        "Viewed",
+        "Requested"
       ],
       "dueDate": [
         "",
-        "2026-01-15T15:09:03.210Z",
+        "2026-01-18T14:20:01.763Z",
         "",
         "",
         "",
-        "2026-01-15T13:43:36.523Z",
-        "",
-        "2026-01-15T15:04:09.647Z",
-        "2026-02-20T18:00:00Z",
         ""
       ],
-      "borrowed": 4,
-      "requested": 6
+      "borrowed": 1,
+      "requested": 2
     },
     {
       "id": "UB2",
@@ -169,8 +176,9 @@
     {
       "id": "AB1",
       "bookIds": [
-        "B5",
+        "B7",
         "B3",
+        "B5",
         "B1",
         "B4",
         "B6"

@@ -89,7 +89,8 @@ text {
   margin-top: 1rem;
 }
 
-.input input {
+.input input,
+select {
   width: 14rem;
   margin-top: 0.5rem;
   border: 2px solid grey;
@@ -107,7 +108,8 @@ text {
   font-weight: 450;
 }
 
-#loginBtn {
+#loginBtn,
+#addBtn {
   font-family: 'Roboto', sans-serif;
   margin-top: 1rem;
   background: #E53935;
@@ -120,9 +122,7 @@ text {
   border-radius: 10px;
 }
 
-/*---INDIVIDUAL BOOK INFO---*/
-
-/*---STUDENT HOMEPAGE---*/
+/*---STUDENT STUFF---*/
 /*---Search Bar---*/
 
 #searchBar {
@@ -248,4 +248,23 @@ text {
 
 .noBooks {
   margin: auto;
+}
+
+/*---ADMIN STUFF---*/
+/*---Add Books---*/
+
+.images {
+  width: 14rem;
+  margin-top: 0.5rem;
+  border: 2px solid grey;
+  background: white;
+  border-radius: 10px;
+  padding: 10px;
+  outline: none;
+}
+
+#bookLocImg,
+#bookImgImg {
+  text-align: center;
+  margin-top: 0.5rem;
 }
