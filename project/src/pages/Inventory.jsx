@@ -4,6 +4,7 @@ import Stack from "react-bootstrap/Stack"
 import { useNavigate } from "react-router-dom";
 import NoBooks from "../components/NoBooks";
 import Close from "../assets/Close.png"
+import { addAdminLog } from "../adminLog";
 /*
 All books (recently viewed)
 Borrowed
@@ -91,6 +92,15 @@ const Inventory = () => {
             });
             alert("Request cancelled!");
             getBooks(userBook[0]);
+            let bookInfo = await fetch(`http://localhost:5050/libraryData/${id}`)
+            bookInfo = await bookInfo.json();
+            addAdminLog("cancelled", bookInfo.identifier, bookInfo.title, localStorage.getItem("userId"));
+            let adminNoti = await fetch(`http://localhost:5050/adminLogs`);
+            adminNoti = await adminNoti.json();
+            adminNoti = adminNoti.find(n => n.bookISBN == bookInfo.identifier);
+            await fetch(`http://localhost:5050/adminLogs/${adminNoti.id}`, {
+                method: "DELETE"
+            })
         } catch (e) {
             alert(e);
         }

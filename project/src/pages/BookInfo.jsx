@@ -176,6 +176,7 @@ const BookInfo = () => {
                             body: JSON.stringify(jsonData)
                         });
                         setBookState("Requested");
+                        addAdminLog("requested", book.identifier, book.title, localStorage.getItem('userId'));
                     }
                     bookRequested();
                     alert("Requested successfully!");

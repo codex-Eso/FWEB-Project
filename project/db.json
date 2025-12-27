@@ -131,7 +131,7 @@
       "bookISBN": 6769676973,
       "bookName": "Dumb Dog",
       "actionName": "edit",
-      "readLog": false
+      "readLog": true
     },
     {
       "id": "08f8",
@@ -140,6 +140,31 @@
       "bookName": "Dumb Dog",
       "actionName": "delete",
       "readLog": true
+    },
+    {
+      "id": "74f6",
+      "auditTime": "2025-12-27T14:45:50.138Z",
+      "bookISBN": 6945606555,
+      "bookName": "Gaming History for Dummies",
+      "actionName": "accepted",
+      "readLog": true
+    },
+    {
+      "id": "6674",
+      "auditTime": "2025-12-27T14:53:18.942Z",
+      "bookISBN": 9115092636,
+      "bookName": "Studies",
+      "actionName": "cancelled",
+      "readLog": true
+    },
+    {
+      "id": "bfdd",
+      "auditTime": "2025-12-27T15:14:01.903Z",
+      "bookISBN": 7437004567,
+      "bookName": "Book of Nothing",
+      "actionName": "cancelled",
+      "readLog": true,
+      "userId": "U3"
     }
   ],
   "notification": [
@@ -226,6 +251,111 @@
       "message": "Dear Student, the library book, Biography, has been successfully borrowed! Make sure to return the book back to the library after 4 weeks!",
       "messageTime": "2025-12-24T08:54:11.243Z",
       "bookId": "B6"
+    },
+    {
+      "id": "0639",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Studies, has been successfully requested! Waiting might take a longer than a week if all available copies are taken.",
+      "messageTime": "2025-12-27T11:59:04.282Z",
+      "bookId": "B2"
+    },
+    {
+      "id": "982b",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Gaming History for Dummies, has been successfully requested! Waiting might take a longer than a week if all available copies are taken.",
+      "messageTime": "2025-12-27T14:01:07.753Z",
+      "bookId": "B5"
+    },
+    {
+      "id": "7532",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Gaming History for Dummies, is now ready for collection! Please collect the book within 3 days.",
+      "messageTime": "2025-12-27T14:45:49.953Z",
+      "bookId": "B5"
+    },
+    {
+      "id": "9394",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Studies, has been rejected for collection by the admin.",
+      "messageTime": "2025-12-27T14:49:40.060Z",
+      "bookId": "B2"
+    },
+    {
+      "id": "0325",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Studies, has been successfully requested! Waiting might take a longer than a week if all available copies are taken.",
+      "messageTime": "2025-12-27T14:51:19.209Z",
+      "bookId": "B2"
+    },
+    {
+      "id": "f054",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Studies, has been rejected for collection by the admin.",
+      "messageTime": "2025-12-27T14:51:39.440Z",
+      "bookId": "B2"
+    },
+    {
+      "id": "71be",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Studies, has been successfully requested! Waiting might take a longer than a week if all available copies are taken.",
+      "messageTime": "2025-12-27T14:52:50.661Z",
+      "bookId": "B2"
+    },
+    {
+      "id": "bd77",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Studies, has been rejected for collection by the admin.",
+      "messageTime": "2025-12-27T14:53:18.787Z",
+      "bookId": "B2"
+    },
+    {
+      "id": "f1c9",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Book of Nothing, has been successfully cancelled!",
+      "messageTime": "2025-12-27T15:02:15.218Z",
+      "bookId": "B4"
+    },
+    {
+      "id": "ad17",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Book of Nothing, has been successfully requested! Waiting might take a longer than a week if all available copies are taken.",
+      "messageTime": "2025-12-27T15:07:55.228Z",
+      "bookId": "B4"
+    },
+    {
+      "id": "070d",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Book of Nothing, has been successfully cancelled!",
+      "messageTime": "2025-12-27T15:08:42.890Z",
+      "bookId": "B4"
+    },
+    {
+      "id": "ee41",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Book of Nothing, has been successfully requested! Waiting might take a longer than a week if all available copies are taken.",
+      "messageTime": "2025-12-27T15:11:49.971Z",
+      "bookId": "B4"
+    },
+    {
+      "id": "5c96",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Book of Nothing, has been successfully cancelled!",
+      "messageTime": "2025-12-27T15:11:52.042Z",
+      "bookId": "B4"
+    },
+    {
+      "id": "44d5",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Book of Nothing, has been successfully requested! Waiting might take a longer than a week if all available copies are taken.",
+      "messageTime": "2025-12-27T15:12:19.761Z",
+      "bookId": "B4"
+    },
+    {
+      "id": "dce6",
+      "studentId": "U3",
+      "message": "Dear Student, the library book, Book of Nothing, has been successfully cancelled!",
+      "messageTime": "2025-12-27T15:14:01.366Z",
+      "bookId": "B4"
     }
   ],
   "bookInventory": [
@@ -242,19 +372,22 @@
       "id": "UB2",
       "studentId": "U3",
       "booksIds": [
-        "B6",
         "B4",
-        "B5"
+        "B5",
+        "B2",
+        "B6"
       ],
       "status": [
-        "Borrowed",
-        "Viewed",
-        "Cancelled"
+        "Cancelled",
+        "Collecting",
+        "Cancelled",
+        "Borrowed"
       ],
       "dueDate": [
-        "2026-01-21T08:54:10.376Z",
         "",
-        ""
+        "2025-12-30T14:45:50.080Z",
+        "",
+        "2026-01-21T08:54:10.376Z"
       ],
       "borrowed": 1,
       "requested": 0
