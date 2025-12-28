@@ -53,19 +53,19 @@ const Notification = () => {
                     <h5>{formatDueDate(n.messageTime)}</h5>
                     <span>{n.message}</span>
                 </div>
-                <div className='my-3'></div>
+                <div className="mb-3"></div>
             </>
         );
     });
     return (
-        <div className="text-start">
+        <div>
             <h2 className="mb-3">Your Notifications</h2>
             {notification.length === 0 ? (
                 <>
                     <span className="mt-3 d-flex justify-content-center align-items-center">No New Notifications!</span>
                 </>
             ) : (
-                notifcationDisplay
+                <span className="notiBox">{notifcationDisplay}</span>
             )}
         </div>
     );

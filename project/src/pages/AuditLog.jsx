@@ -115,7 +115,7 @@ const AuditLog = () => {
             addAdminLog("accepted", isbn, title);
             let adminNoti = await fetch(`http://localhost:5050/adminLogs`);
             adminNoti = await adminNoti.json();
-            adminNoti = adminNoti.find((n) => n.bookISBN == isbn);
+            adminNoti = adminNoti.slice().reverse().find((n) => n.bookISBN == isbn);
             await fetch(`http://localhost:5050/adminLogs/${adminNoti.id}`, {
                 method: "DELETE"
             })
@@ -153,7 +153,7 @@ const AuditLog = () => {
             addAdminLog("cancelled", isbn, title);
             let adminNoti = await fetch(`http://localhost:5050/adminLogs`);
             adminNoti = await adminNoti.json();
-            adminNoti = adminNoti.find(n => n.bookISBN == isbn);
+            adminNoti = adminNoti.slice().reverse().find(n => n.bookISBN == isbn);
             await fetch(`http://localhost:5050/adminLogs/${adminNoti.id}`, {
                 method: "DELETE"
             })
@@ -176,7 +176,7 @@ const AuditLog = () => {
                     {(log.actionName === "returned") ? <text>- {log.bookName} (ISBN: {log.bookISBN}) has been returned to the library!</text> : null}
                 </div>
                 {(!log.readLog && log.actionName !== "requested") ? <img src={Read} type="button" className="ms-auto" width={40} onClick={() => updateLog(log.id)} /> : null}
-                {log.actionName === "requested" ? <Stack gap={4} className="ms-auto" direction="horizontal"><img onClick={() => { accepted(log.bookISBN, log.bookName, log.userId); }} src={Accept} width={30} /><img onClick={() => { cancelled(log.bookISBN, log.bookName, log.userId); }} src={Cancel} width={30} /></Stack> : null}
+                {log.actionName === "requested" ? <Stack gap={4} className="ms-auto" direction="horizontal"><img type="button" onClick={() => { accepted(log.bookISBN, log.bookName, log.userId); }} src={Accept} width={30} /><img type="button" onClick={() => { cancelled(log.bookISBN, log.bookName, log.userId); }} src={Cancel} width={30} /></Stack> : null}
             </div>
         )
     })
