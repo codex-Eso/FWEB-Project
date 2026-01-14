@@ -8,13 +8,19 @@ mongoose
     .connect(process.env.MONGO_URI)
     .then(() => console.log("MongoDB Connected"))
     .catch((err) => console.log(err));
+mongoose.connection.once("open", () => {
+    console.log("Connected to DB:", mongoose.connection.name);
+});
 const app = express();
 // Enables CORS so your front-end can access your backend API without browser blocking it.
 app.use(cors());
 // Allows Express to parse JSON data from incoming requests
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use('/users', users);
+app.use("/users", users);
+app.get("/", async (req, res) => {
+    res.send("<h1>Welcome to my API! The server is running successfully.</h1>");
+});
 // Set port
 const PORT = process.env.PORT || 5050;
 // Start server
