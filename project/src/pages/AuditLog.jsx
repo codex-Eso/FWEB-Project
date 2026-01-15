@@ -94,7 +94,6 @@ const AuditLog = () => {
             notification.studentId = uId;
             notification.message = `Dear Student, the library book, ${title}, is now ready for collection! Please collect the book within 3 days.`
             notification.messageTime = (new Date()).toISOString();
-            //GET libraryData
             let books = await fetch("http://localhost:5050/libraryData");
             books = await books.json();
             books = books.filter((b) => b.identifier == isbn);
@@ -143,7 +142,6 @@ const AuditLog = () => {
             notification.studentId = uId;
             notification.message = `Dear Student, the library book, ${title}, has been rejected for collection by the admin.`
             notification.messageTime = (new Date()).toISOString();
-            //GET libraryData
             let books = await fetch("http://localhost:5050/libraryData");
             books = await books.json();
             books = books.filter((b) => b.identifier == isbn);

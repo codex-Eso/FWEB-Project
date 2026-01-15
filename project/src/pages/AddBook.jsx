@@ -27,13 +27,13 @@ const AddBook = () => {
         }
     }
     const addBook = async () => {
-        //basic input validation, we admin the admin is smart and there should not be any case-sensitive problems/everything entered should be roughly valid)
+        //basic input validation, we assume the admin is smart and there should not be any case-sensitive problems/everything entered should be roughly valid)
         const title = document.getElementById("title").value
         const author = document.getElementById("author").value
         const bookImage = document.getElementById("bookImg").value
         const publisher = document.getElementById("publisher").value
         const isbn = Number(document.getElementById("identifier").value)
-        const availability = document.getElementById("availability").value === true;
+        const availability = document.getElementById("availability").value == "true";
         const copies = Number(document.getElementById("copies").value)
         const location = document.getElementById("location").value
         const bookLoc = document.getElementById("bookLoc").value
@@ -59,7 +59,6 @@ const AddBook = () => {
         }
         let id;
         try {
-            //GET libraryData
             const res = await fetch(`http://localhost:5050/libraryData`);
             if (!res.ok) throw new Error("Failed to get books! Try again later!");
             let data = await res.json();
@@ -82,7 +81,6 @@ const AddBook = () => {
         jsonData.imgLocation = bookLocImg;
         jsonData.level = level;
         try {
-            //POST libraryData
             await fetch(`http://localhost:5050/libraryData`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

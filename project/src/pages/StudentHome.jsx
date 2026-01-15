@@ -27,7 +27,6 @@ const StudentHome = () => {
         }
         const getAllBooks = async () => {
             try {
-                //GET libraryData
                 const res = await fetch(`http://localhost:5050/libraryData`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();

@@ -21,7 +21,6 @@ const Others = () => {
                         body: JSON.stringify(userBook)
                     })
                     alert("Overdue scenario triggered!");
-                    //GET libraryData
                     let getBook = await fetch(`http://localhost:5050/libraryData/${bookId}`);
                     getBook = await getBook.json();
                     let notification = new Object();
@@ -41,10 +40,9 @@ const Others = () => {
                     adminNoti.bookName = getBook.title
                     adminNoti.actionName = "overdue"
                     adminNoti.readLog = false
-                    //GET users
-                    let user = await fetch(`http://localhost:5050/users`);
+                    //check if works
+                    let user = await fetch(`http://localhost:5050/users/${localStorage.getItem("userId")}`);
                     user = await user.json();
-                    user = user.find(u => (u.id === localStorage.getItem('userId')));
                     adminNoti.adminNo = user.username;
                     //POST adminLogs
                     await fetch(`http://localhost:5050/adminLogs`, {
@@ -85,14 +83,12 @@ const Others = () => {
                         body: JSON.stringify(userBook)
                     })
                     alert("Returned scenario triggered!");
-                    //GET libraryData
                     let getBook = await fetch(`http://localhost:5050/libraryData/${bookId}`);
                     getBook = await getBook.json();
                     if (!getBook.availability) {
                         getBook.availability = true;
                     }
                     getBook.copies += 1;
-                    //PATCH libraryData
                     await fetch(`http://localhost:5050/libraryData/${bookId}`, {
                         method: "PATCH",
                         headers: { "Content-Type": "application/json" },

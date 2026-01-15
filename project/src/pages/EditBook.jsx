@@ -14,7 +14,6 @@ const EditBook = () => {
     useEffect(() => {
         const getBookInfo = async () => {
             try {
-                //GET libraryData
                 const res = await fetch(`http://localhost:5050/libraryData/${id}`);
                 if (!res.ok) throw new Error("Failed to get book! Try again later!");
                 let data = await res.json();
@@ -52,7 +51,7 @@ const EditBook = () => {
         const bookImage = document.getElementById("bookImg").value
         const publisher = document.getElementById("publisher").value
         const isbn = Number(document.getElementById("identifier").value)
-        const availability = document.getElementById("availability").value === true;
+        const availability = document.getElementById("availability").value == "true";
         const copies = Number(document.getElementById("copies").value)
         const location = document.getElementById("location").value
         const bookLoc = document.getElementById("bookLoc").value
@@ -90,7 +89,6 @@ const EditBook = () => {
         }
         jsonData.level = level;
         try {
-            //PATCH libraryData
             await fetch(`http://localhost:5050/libraryData/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },

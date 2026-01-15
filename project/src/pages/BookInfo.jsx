@@ -20,7 +20,6 @@ const BookInfo = () => {
     useEffect(() => {
         const getBookInfo = async () => {
             try {
-                //GET libraryData
                 const res = await fetch(`http://localhost:5050/libraryData/${id}`);
                 if (!res.ok) throw new Error("Failed to get book! Try again later!");
                 let data = await res.json();
@@ -129,7 +128,6 @@ const BookInfo = () => {
                             const updatedBook = { ...book };
                             updatedBook.copies -= 1;
                             if (updatedBook.copies === 0) updatedBook.availability = false;
-                            //PATCH libraryData
                             await fetch(`http://localhost:5050/libraryData/${id}`, {
                                 method: "PATCH",
                                 headers: { "Content-Type": "application/json" },
@@ -212,7 +210,6 @@ const BookInfo = () => {
                         try {
                             let bookISBN = book.identifier
                             let bookName = book.title
-                            //DELETE libraryData
                             await fetch(`http://localhost:5050/libraryData/${id}`, {
                                 method: "DELETE"
                             })

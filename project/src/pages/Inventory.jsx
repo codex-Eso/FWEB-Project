@@ -51,7 +51,6 @@ const Inventory = () => {
         }
         const libraryBooks = async () => {
             try {
-                //GET libraryData
                 const res = await fetch(`http://localhost:5050/libraryData`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
@@ -97,7 +96,6 @@ const Inventory = () => {
             });
             alert("Request cancelled!");
             getBooks(userBook[0]);
-            //GET libraryData
             let bookInfo = await fetch(`http://localhost:5050/libraryData/${id}`)
             bookInfo = await bookInfo.json();
             addAdminLog("cancelled", bookInfo.identifier, bookInfo.title, localStorage.getItem("userId"));
