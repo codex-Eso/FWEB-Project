@@ -39,7 +39,6 @@ const Inventory = () => {
     useEffect(() => {
         const bookInventory = async () => {
             try {
-                //GET bookInventory
                 const res = await fetch(`http://localhost:5050/bookInventory`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
@@ -67,7 +66,6 @@ const Inventory = () => {
         document.getElementById(state).style.color = "#E53935";
     }, [state, books])
     const cancelRequest = async (id, title) => {
-        //GET bookInventory
         const res = await fetch(`http://localhost:5050/bookInventory`);
         if (!res.ok) throw new Error("Failed to get books! Try again later!");
         let userBook = await res.json();
@@ -76,7 +74,6 @@ const Inventory = () => {
         userBook[0].status[getId] = "Cancelled";
         userBook[0].requested -= 1;
         try {
-            //PATCH bookInventory
             await fetch(`http://localhost:5050/bookInventory/${userBook[0].id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
@@ -114,8 +111,7 @@ const Inventory = () => {
     }
     const renew = async (id, title) => {
         try {
-            //due to complexity, I will not be adding the logic for letting 1 renew per book only
-            //GET bookInventory
+            //due to complexity, I will not be adding the logic for letting 1 renew per book only            
             let userBook = await fetch(`http://localhost:5050/bookInventory`);
             userBook = await userBook.json();
             userBook = userBook.find(b => b.studentId === localStorage.getItem("userId"));
@@ -123,7 +119,6 @@ const Inventory = () => {
             let getDate = new Date(userBook.dueDate[i]);
             getDate.setDate(getDate.getDate() + 3);
             userBook.dueDate[i] = getDate;
-            //PATCH bookInventory
             await fetch(`http://localhost:5050/bookInventory/${userBook.id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },

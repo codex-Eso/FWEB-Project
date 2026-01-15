@@ -50,7 +50,6 @@ const BookInfo = () => {
                         body: JSON.stringify(data[0])
                     });
                 } else if (getRole() === "student") {
-                    //GET bookInventory
                     const res = await fetch(`http://localhost:5050/bookInventory`);
                     if (!res.ok) throw new Error("Failed to get books! Try again later!");
                     let data = await res.json();
@@ -71,7 +70,6 @@ const BookInfo = () => {
                     setBookState(data[0].status[0]);
                     setBorrowedCount(data[0].borrowed);
                     setRequestedCount(data[0].requested);
-                    //PATCH bookInventory
                     await fetch(`http://localhost:5050/bookInventory/${data[0].id}`, {
                         method: "PATCH",
                         headers: { "Content-Type": "application/json" },
@@ -108,7 +106,6 @@ const BookInfo = () => {
                             let dueDate = new Date(tdyDate);
                             dueDate.setDate(tdyDate.getDate() + 28);
                             dueDate = dueDate.toISOString();
-                            //GET bookInventory
                             const res = await fetch(`http://localhost:5050/bookInventory`);
                             if (!res.ok) throw new Error("Failed to get books! Try again later!");
                             let userBook = await res.json();
@@ -117,7 +114,6 @@ const BookInfo = () => {
                             userBook[0].status[getId] = "Borrowed";
                             userBook[0].dueDate[getId] = dueDate;
                             userBook[0].borrowed += 1;
-                            //PATCH bookInventory
                             await fetch(`http://localhost:5050/bookInventory/${userBook[0].id}`, {
                                 method: "PATCH",
                                 headers: { "Content-Type": "application/json" },
@@ -157,7 +153,6 @@ const BookInfo = () => {
                         return;
                     }
                     const bookRequested = async () => {
-                        //GET bookInventory
                         const res = await fetch(`http://localhost:5050/bookInventory`);
                         if (!res.ok) throw new Error("Failed to get books! Try again later!");
                         let userBook = await res.json();
@@ -165,7 +160,6 @@ const BookInfo = () => {
                         let getId = userBook[0].booksIds.indexOf(id);
                         userBook[0].status[getId] = "Requested";
                         userBook[0].requested += 1;
-                        //PATCH bookInventory
                         await fetch(`http://localhost:5050/bookInventory/${userBook[0].id}`, {
                             method: "PATCH",
                             headers: { "Content-Type": "application/json" },

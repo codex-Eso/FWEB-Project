@@ -4,7 +4,6 @@ const Others = () => {
     //note: case sensitive
     const overdue = async () => {
         const bookId = prompt("Enter the book id to be overdued:\n");
-        //GET bookInventory
         let userBook = await fetch("http://localhost:5050/bookInventory");
         userBook = await userBook.json();
         userBook = userBook.find(b => (b.studentId === localStorage.getItem("userId")));
@@ -14,7 +13,6 @@ const Others = () => {
             if (userBook.status[i] === "Borrowed") {
                 userBook.status[i] = "Overdue";
                 try {
-                    //PATCH bookInventory
                     await fetch(`http://localhost:5050/bookInventory/${userBook.id}`, {
                         method: "PATCH",
                         headers: { "Content-Type": "application/json" },
@@ -64,7 +62,6 @@ const Others = () => {
     }
     const returned = async () => {
         const bookId = prompt("Enter the book id to be returned:\n");
-        //GET bookInventory
         let userBook = await fetch("http://localhost:5050/bookInventory");
         userBook = await userBook.json();
         userBook = userBook.find(b => (b.studentId === localStorage.getItem("userId")));
@@ -76,7 +73,6 @@ const Others = () => {
                 userBook.borrowed -= 1;
                 userBook.dueDate[i] = "";
                 try {
-                    //PATCH bookInventory
                     await fetch(`http://localhost:5050/bookInventory/${userBook.id}`, {
                         method: "PATCH",
                         headers: { "Content-Type": "application/json" },

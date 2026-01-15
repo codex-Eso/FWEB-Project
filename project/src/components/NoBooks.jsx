@@ -6,6 +6,7 @@ const NoBooks = () => {
             <img src={Empty} width={150} />
             <br></br>
             <h4>Cannot Find Any Books</h4>
+            <h5 style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => window.location.reload()}>Reload?</h5>
         </div>
     )
 }

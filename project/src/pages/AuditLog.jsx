@@ -99,13 +99,11 @@ const AuditLog = () => {
             books = books.filter((b) => b.identifier == isbn);
             const bookId = books[0].id
             notification.bookId = bookId
-            //GET notification
             await fetch(`http://localhost:5050/notification`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(notification)
             });
-            //GET bookInventory
             let updatedBook = await fetch("http://localhost:5050/bookInventory");
             updatedBook = await updatedBook.json();
             updatedBook = updatedBook.find((b) => b.studentId == uId);
@@ -117,7 +115,6 @@ const AuditLog = () => {
             dueDate = dueDate.toISOString();
             updatedBook.dueDate[bookIndex] = dueDate;
             updatedBook.requested -= 1;
-            //PATCH bookInventory
             await fetch(`http://localhost:5050/bookInventory/${updatedBook.id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
@@ -153,14 +150,12 @@ const AuditLog = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(notification)
             });
-            //GET bookInventory
             let updatedBook = await fetch("http://localhost:5050/bookInventory");
             updatedBook = await updatedBook.json();
             updatedBook = updatedBook.find((b) => b.studentId == uId);
             let bookIndex = updatedBook.booksIds.indexOf(bookId);
             updatedBook.status[bookIndex] = "Cancelled";
             updatedBook.requested -= 1;
-            //PATCH bookInventory
             await fetch(`http://localhost:5050/bookInventory/${updatedBook.id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
