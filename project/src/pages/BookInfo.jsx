@@ -120,12 +120,16 @@ const BookInfo = () => {
                                 body: JSON.stringify(userBook[0])
                             });
                             const updatedBook = { ...book };
+                            const formData = new FormData();
                             updatedBook.copies -= 1;
-                            if (updatedBook.copies === 0) updatedBook.availability = false;
+                            formData.append('copies', updatedBook.copies)
+                            if (updatedBook.copies === 0) {
+                                updatedBook.availability = false;
+                                formData.append('availability', updatedBook.availability);
+                            }
                             await fetch(`http://localhost:5050/libraryData/${id}`, {
                                 method: "PATCH",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify(updatedBook)
+                                body: formData
                             });
                             actualBook(updatedBook);
                             let jsonData = new Object();
@@ -134,7 +138,6 @@ const BookInfo = () => {
                             let getDate = new Date();
                             jsonData.messageTime = getDate.toISOString();
                             jsonData.bookId = id;
-                            //POST notification
                             await fetch(`http://localhost:5050/notification`, {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
@@ -171,7 +174,6 @@ const BookInfo = () => {
                         let getDate = new Date();
                         jsonData.messageTime = getDate.toISOString();
                         jsonData.bookId = id;
-                        //POST notification
                         await fetch(`http://localhost:5050/notification`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },

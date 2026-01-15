@@ -85,7 +85,6 @@ const Inventory = () => {
             let getDate = new Date();
             jsonData.messageTime = getDate.toISOString();
             jsonData.bookId = id;
-            //POST notification
             await fetch(`http://localhost:5050/notification`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -96,12 +95,10 @@ const Inventory = () => {
             let bookInfo = await fetch(`http://localhost:5050/libraryData/${id}`)
             bookInfo = await bookInfo.json();
             addAdminLog("cancelled", bookInfo.identifier, bookInfo.title, localStorage.getItem("userId"));
-            //GET adminLogs
             let adminNoti = await fetch(`http://localhost:5050/adminLogs`);
             adminNoti = await adminNoti.json();
             //fix the bug where it deletes the wrong audit log, now it is fixed to delete the previously requested book by the user
             adminNoti = adminNoti.reverse().find(n => n.userId == localStorage.getItem("userId") && n.actionName == "requested" && n.bookISBN == bookInfo.identifier);
-            //DELETE adminLogs
             await fetch(`http://localhost:5050/adminLogs/${adminNoti.id}`, {
                 method: "DELETE"
             })
@@ -131,7 +128,6 @@ const Inventory = () => {
             let getTdyDate = new Date();
             jsonData.messageTime = getTdyDate.toISOString();
             jsonData.bookId = id;
-            //POST notification
             await fetch(`http://localhost:5050/notification`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

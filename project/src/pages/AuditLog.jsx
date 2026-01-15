@@ -6,8 +6,6 @@ import Accept from "../assets/Accept.png"
 import Cancel from "../assets/Cancel.png"
 import { addAdminLog } from "../adminLog"
 /*
-overdue (book overdue due to collection/borrowing)
-collected (book successfully collected)
 UPDATED AND SIMPLFIED DATA TABLE:
 id
 auditTime
@@ -26,7 +24,6 @@ const AuditLog = () => {
             //simplify this to call adminLogs once???
             if (state === "All") {
                 try {
-                    //GET adminLogs
                     const res = await fetch(`http://localhost:5050/adminLogs`)
                     if (!res.ok) throw new Error("Failed to get admin logs! Try again later!");
                     let data = await res.json();
@@ -36,7 +33,6 @@ const AuditLog = () => {
                 }
             } else if (state === "Unread") {
                 try {
-                    //GET adminLogs
                     const res = await fetch(`http://localhost:5050/adminLogs`)
                     if (!res.ok) throw new Error("Failed to get admin logs! Try again later!");
                     let data = await res.json();
@@ -47,7 +43,6 @@ const AuditLog = () => {
                 }
             } else if (state == "Read") {
                 try {
-                    //GET adminLogs
                     const res = await fetch(`http://localhost:5050/adminLogs`)
                     if (!res.ok) throw new Error("Failed to get admin logs! Try again later!");
                     let data = await res.json();
@@ -121,11 +116,9 @@ const AuditLog = () => {
                 body: JSON.stringify(updatedBook)
             });
             addAdminLog("accepted", isbn, title);
-            //GET adminLogs
             let adminNoti = await fetch(`http://localhost:5050/adminLogs`);
             adminNoti = await adminNoti.json();
             adminNoti = adminNoti.slice().reverse().find((n) => n.id == logId);
-            //DELETE adminLogs
             await fetch(`http://localhost:5050/adminLogs/${adminNoti.id}`, {
                 method: "DELETE"
             })
@@ -144,7 +137,6 @@ const AuditLog = () => {
             books = books.filter((b) => b.identifier == isbn);
             const bookId = books[0].id
             notification.bookId = bookId
-            //POST notification
             await fetch(`http://localhost:5050/notification`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -162,11 +154,9 @@ const AuditLog = () => {
                 body: JSON.stringify(updatedBook)
             });
             addAdminLog("cancelled", isbn, title);
-            //GET adminLogs
             let adminNoti = await fetch(`http://localhost:5050/adminLogs`);
             adminNoti = await adminNoti.json();
             adminNoti = adminNoti.slice().reverse().find(n => n.id == logId);
-            //DELETE adminLogs
             await fetch(`http://localhost:5050/adminLogs/${adminNoti.id}`, {
                 method: "DELETE"
             })
@@ -188,7 +178,7 @@ const AuditLog = () => {
                     {(log.actionName === "overdue") ? <text>- Notice: {log.bookName} (ISBN: {log.bookISBN}) has not been returned by the user of admin number, {log.adminNo}.</text> : null}
                     {(log.actionName === "returned") ? <text>- {log.bookName} (ISBN: {log.bookISBN}) has been returned to the library!</text> : null}
                 </div>
-                {(!log.readLog && log.actionName !== "requested") ? <img src={Read} type="button" className="ms-auto" width={40} onClick={() => updateLog(log.id)} /> : null}
+                {(!log.readLog && log.actionName !== "requested") ? <img src={Read} type="button" className="ms-auto" width={40} onClick={() => updateLog(log._id)} /> : null}
                 {/*From here, add new parameter of log.id in accept + cancel functions*/}
                 {log.actionName === "requested" ? <Stack gap={4} className="ms-auto" direction="horizontal"><img type="button" onClick={() => { accepted(log.bookISBN, log.bookName, log.userId, log.id); }} src={Accept} width={30} /><img type="button" onClick={() => { cancelled(log.bookISBN, log.bookName, log.userId, log.id); }} src={Cancel} width={30} /></Stack> : null}
             </div>

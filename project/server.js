@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import adminBooks from "./routes/adminBooks.js";
 import bookInventory from "./routes/bookInventory.js";
 import notification from './routes/notification.js';
+import adminLogs from "./routes/adminLogs.js";
 dotenv.config();
 mongoose
     .connect(process.env.MONGO_URI)
@@ -21,6 +22,7 @@ app.use(cors());
 // Allows Express to parse JSON data from incoming requests
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+app.use('/adminLogs', adminLogs)
 app.use('/notification', notification)
 app.use('/bookInventory', bookInventory)
 app.use('/adminBooks', adminBooks)
