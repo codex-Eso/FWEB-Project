@@ -42,8 +42,9 @@ const Others = () => {
                     adminNoti.actionName = "overdue"
                     adminNoti.readLog = false
                     //GET users
-                    let user = await fetch(`http://localhost:5050/users/${localStorage.getItem("userId")}`);
+                    let user = await fetch(`http://localhost:5050/users`);
                     user = await user.json();
+                    user = user.find(u => (u.id === localStorage.getItem('userId')));
                     adminNoti.adminNo = user.username;
                     //POST adminLogs
                     await fetch(`http://localhost:5050/adminLogs`, {
