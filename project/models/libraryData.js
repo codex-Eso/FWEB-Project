@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
+const librarySchema = new mongoose.Schema({
     id: String,
     location: String,
     availability: Boolean,
@@ -14,4 +14,4 @@ const userSchema = new mongoose.Schema({
     level: Number
 })
 
-export default mongoose.model("LibraryData", userSchema, "libraryData")
+export default mongoose.model("LibraryData", librarySchema, "libraryData")

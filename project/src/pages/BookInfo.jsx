@@ -34,7 +34,6 @@ const BookInfo = () => {
         const getUserBooks = async () => {
             try {
                 if (getRole() === "admin") {
-                    //GET adminBooks
                     const res = await fetch(`http://localhost:5050/adminBooks`);
                     if (!res.ok) throw new Error("Failed to get books! Try again later!");
                     let data = await res.json();
@@ -45,8 +44,7 @@ const BookInfo = () => {
                     } else {
                         data[0].bookIds.unshift(id);
                     }
-                    //PATCH adminBooks
-                    await fetch(`http://localhost:5050/adminBooks/AB1`, {
+                    await fetch(`http://localhost:5050/adminBooks`, {
                         method: "PATCH",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(data[0])

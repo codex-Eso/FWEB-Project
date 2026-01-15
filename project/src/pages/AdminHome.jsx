@@ -14,7 +14,6 @@ const AdminHome = () => {
     useEffect(() => {
         const getViewedBooks = async () => {
             try {
-                //GET adminBooks
                 const res = await fetch(`http://localhost:5050/adminBooks`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();

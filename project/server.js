@@ -4,6 +4,7 @@ import users from "./routes/users.js";
 import libraryData from "./routes/libraryData.js";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import adminBooks from "./routes/adminBooks.js";
 dotenv.config();
 mongoose
     .connect(process.env.MONGO_URI)
@@ -18,6 +19,7 @@ app.use(cors());
 // Allows Express to parse JSON data from incoming requests
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+app.use('/adminBooks', adminBooks)
 app.use('/libraryData', libraryData);
 app.use("/users", users);
 app.get("/", async (req, res) => {
