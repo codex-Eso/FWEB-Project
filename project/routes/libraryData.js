@@ -1,7 +1,10 @@
 import express from "express";
+import multer from "multer";
+import { storage } from "../cloudinary.js";
 import LibraryData from '../models/libraryData.js'
 
 const router = express.Router();
+const upload = multer({ storage });
 
 router.get("/", async (req, res) => {
     try {
@@ -30,10 +33,15 @@ router.delete("/:id", async (req, res) => {
     }
 })
 
-router.post("/", async (req, res) => {
+router.post("/", upload.fields([
+    { name: "bookImage", maxCount: 1 },
+    { name: "imgLocation", maxCount: 1 }
+]), async (req, res) => {
     try {
-        const { id, location, availability, identifier, copies, title, author, bookImage, publisher, imgLocation, level } = req.body;
-        if (!title.trim() || !author.trim() || !publisher.trim() || !location.trim() || !bookImage || !identifier || copies === "" || availability === "" || level === "") {
+        const { id, location, availability, identifier, copies, title, author, publisher, level } = req.body;
+        const bookImageUrl = req.files.bookImage?.[0].path;
+        const imgLocationUrl = req.files.imgLocation?.[0].path;
+        if (!title.trim() || !author.trim() || !publisher.trim() || !location.trim() || !bookImageUrl || !identifier || copies === "" || availability === "" || level === "") {
             throw new Error('Cannot proceed! There are empty input values!');
         } else {
             const newLibraryBook = new LibraryData({
@@ -44,9 +52,9 @@ router.post("/", async (req, res) => {
                 copies,
                 title,
                 author,
-                bookImage,
+                bookImage: bookImageUrl,
                 publisher,
-                imgLocation,
+                imgLocation: imgLocationUrl,
                 level
             })
             await newLibraryBook.save();
@@ -57,12 +65,21 @@ router.post("/", async (req, res) => {
     }
 })
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", upload.fields([
+    { name: "bookImage", maxCount: 1 },
+    { name: "imgLocation", maxCount: 1 }
+]), async (req, res) => {
     try {
-        const updatedBook = req.body;
+        const updatedBook = { ...req.body };
         if (!updatedBook) {
             throw new Error('Cannot proceed! There are empty input values!')
         } else {
+            if (req.files.bookImage) {
+                updatedBook.bookImage = req.files.bookImage[0].path;
+            }
+            if (req.files.imgLocation) {
+                updatedBook.imgLocation = req.files.imgLocation[0].path;
+            }
             await LibraryData.findOneAndUpdate(
                 { id: req.params.id },
                 { $set: updatedBook }

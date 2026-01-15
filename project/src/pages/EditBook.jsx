@@ -30,15 +30,8 @@ const EditBook = () => {
         const file = document.getElementById(fromImg).files[0];
         if (file.type.startsWith('image/')) {
             document.getElementById(`${fromImg}Img`).innerHTML = `${file.name}`
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                if (fromImg === "bookImg") {
-                    setBookImg(reader.result)
-                } else if (fromImg === "bookLoc") {
-                    setBookLocImg(reader.result)
-                }
-            }
-            reader.readAsDataURL(file);
+            if (fromImg === "bookImg") setBookImg(file);
+            else if (fromImg === "bookLoc") setBookLocImg(file);
             document.querySelectorAll(".images img").src = UploadImage
         } else {
             alert("Please upload an image!");
@@ -72,27 +65,26 @@ const EditBook = () => {
             alert("Cannot proceed! Location & Level must match appropriately!");
             return;
         }
-        let jsonData = new Object();
-        jsonData.id = id;
-        jsonData.location = location;
-        jsonData.availability = availability;
-        jsonData.identifier = isbn;
-        jsonData.copies = copies;
-        jsonData.title = title;
-        jsonData.author = author;
+        let formData = new FormData();
+        formData.append("id", id);
+        formData.append("location", location);
+        formData.append("availability", availability);
+        formData.append("identifier", isbn);
+        formData.append("copies", copies);
+        formData.append("title", title);
+        formData.append("author", author);
         if (bookImage) {
-            jsonData.bookImage = bookImg;
+            formData.append("bookImage", bookImg);
         }
-        jsonData.publisher = publisher;
+        formData.append("publisher", publisher);
         if (bookLoc) {
-            jsonData.imgLocation = bookLocImg;
+            formData.append("imgLocation", bookLocImg);
         }
-        jsonData.level = level;
+        formData.append("level", level);
         try {
             await fetch(`http://localhost:5050/libraryData/${id}`, {
                 method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(jsonData)
+                body: formData
             });
             alert("Book edited!");
             navigate("/admin/logs");
