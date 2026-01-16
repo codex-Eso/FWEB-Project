@@ -4,9 +4,8 @@ const Others = () => {
     //note: case sensitive
     const overdue = async () => {
         const bookId = prompt("Enter the book id to be overdued:\n");
-        let userBook = await fetch("http://localhost:5050/bookInventory");
+        let userBook = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
         userBook = await userBook.json();
-        userBook = userBook.find(b => (b.studentId === localStorage.getItem("userId")));
         let isBookId = userBook.booksIds.find(id => id == bookId)
         if (isBookId !== undefined) {
             let i = userBook.booksIds.indexOf(bookId);
@@ -59,9 +58,8 @@ const Others = () => {
     }
     const returned = async () => {
         const bookId = prompt("Enter the book id to be returned:\n");
-        let userBook = await fetch("http://localhost:5050/bookInventory");
+        let userBook = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
         userBook = await userBook.json();
-        userBook = userBook.find(b => (b.studentId === localStorage.getItem("userId")));
         let isBookId = userBook.booksIds.find(id => id == bookId)
         if (isBookId !== undefined) {
             let i = userBook.booksIds.indexOf(bookId);

@@ -39,11 +39,10 @@ const Inventory = () => {
     useEffect(() => {
         const bookInventory = async () => {
             try {
-                const res = await fetch(`http://localhost:5050/bookInventory`);
+                const res = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
-                data = data.filter(u => u.studentId === localStorage.getItem("userId"));
-                getBooks(data[0]);
+                getBooks(data);
             } catch (e) {
                 console.log(e);
             }
@@ -66,18 +65,17 @@ const Inventory = () => {
         document.getElementById(state).style.color = "#E53935";
     }, [state, books])
     const cancelRequest = async (id, title) => {
-        const res = await fetch(`http://localhost:5050/bookInventory`);
+        const res = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
         if (!res.ok) throw new Error("Failed to get books! Try again later!");
         let userBook = await res.json();
-        userBook = userBook.filter(u => u.studentId === localStorage.getItem("userId"));
-        let getId = userBook[0].booksIds.indexOf(id);
-        userBook[0].status[getId] = "Cancelled";
-        userBook[0].requested -= 1;
+        let getId = userBook.booksIds.indexOf(id);
+        userBook.status[getId] = "Cancelled";
+        userBook.requested -= 1;
         try {
-            await fetch(`http://localhost:5050/bookInventory/${userBook[0].id}`, {
+            await fetch(`http://localhost:5050/bookInventory/${userBook.id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(userBook[0])
+                body: JSON.stringify(userBook)
             });
             let jsonData = new Object();
             jsonData.studentId = localStorage.getItem("userId");
@@ -91,7 +89,7 @@ const Inventory = () => {
                 body: JSON.stringify(jsonData)
             });
             alert("Request cancelled!");
-            getBooks(userBook[0]);
+            getBooks(userBook);
             let bookInfo = await fetch(`http://localhost:5050/libraryData/${id}`)
             bookInfo = await bookInfo.json();
             addAdminLog("cancelled", bookInfo.identifier, bookInfo.title, localStorage.getItem("userId"));
@@ -109,9 +107,8 @@ const Inventory = () => {
     const renew = async (id, title) => {
         try {
             //due to complexity, I will not be adding the logic for letting 1 renew per book only            
-            let userBook = await fetch(`http://localhost:5050/bookInventory`);
+            let userBook = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
             userBook = await userBook.json();
-            userBook = userBook.find(b => b.studentId === localStorage.getItem("userId"));
             let i = userBook.booksIds.indexOf(id);
             let getDate = new Date(userBook.dueDate[i]);
             getDate.setDate(getDate.getDate() + 3);

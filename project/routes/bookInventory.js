@@ -3,9 +3,9 @@ import BookInventory from "../models/bookInventory.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/:studentId", async (req, res) => {
     try {
-        const bookInventory = await BookInventory.find();
+        const bookInventory = await BookInventory.findOne({ studentId: req.params.studentId });
         return res.status(200).json(bookInventory);
     } catch (error) {
         console.error(error);

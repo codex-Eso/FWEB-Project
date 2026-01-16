@@ -50,30 +50,29 @@ const BookInfo = () => {
                         body: JSON.stringify(data[0])
                     });
                 } else if (getRole() === "student") {
-                    const res = await fetch(`http://localhost:5050/bookInventory`);
+                    const res = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
                     if (!res.ok) throw new Error("Failed to get books! Try again later!");
                     let data = await res.json();
-                    data = data.filter(u => u.studentId === localStorage.getItem("userId"));
-                    const getBook = data[0].booksIds.indexOf(id);
+                    const getBook = data.booksIds.indexOf(id);
                     if (getBook !== -1) {
-                        data[0].booksIds.splice(getBook, 1);
-                        data[0].booksIds.unshift(id);
-                        var getStatus = data[0].status.splice(getBook, 1);
-                        data[0].status.unshift(getStatus[0]);
-                        var getDueDate = data[0].dueDate.splice(getBook, 1);
-                        data[0].dueDate.unshift(getDueDate[0]);
+                        data.booksIds.splice(getBook, 1);
+                        data.booksIds.unshift(id);
+                        var getStatus = data.status.splice(getBook, 1);
+                        data.status.unshift(getStatus[0]);
+                        var getDueDate = data.dueDate.splice(getBook, 1);
+                        data.dueDate.unshift(getDueDate[0]);
                     } else {
-                        data[0].booksIds.unshift(id);
-                        data[0].status.unshift("Viewed");
-                        data[0].dueDate.unshift("");
+                        data.booksIds.unshift(id);
+                        data.status.unshift("Viewed");
+                        data.dueDate.unshift("");
                     }
-                    setBookState(data[0].status[0]);
-                    setBorrowedCount(data[0].borrowed);
-                    setRequestedCount(data[0].requested);
-                    await fetch(`http://localhost:5050/bookInventory/${data[0].id}`, {
+                    setBookState(data.status[0]);
+                    setBorrowedCount(data.borrowed);
+                    setRequestedCount(data.requested);
+                    await fetch(`http://localhost:5050/bookInventory/${data.id}`, {
                         method: "PATCH",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(data[0])
+                        body: JSON.stringify(data)
                     });
                 }
             } catch (e) {
@@ -106,18 +105,17 @@ const BookInfo = () => {
                             let dueDate = new Date(tdyDate);
                             dueDate.setDate(tdyDate.getDate() + 28);
                             dueDate = dueDate.toISOString();
-                            const res = await fetch(`http://localhost:5050/bookInventory`);
+                            const res = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
                             if (!res.ok) throw new Error("Failed to get books! Try again later!");
                             let userBook = await res.json();
-                            userBook = userBook.filter(u => u.studentId === localStorage.getItem("userId"));
-                            let getId = userBook[0].booksIds.indexOf(id);
-                            userBook[0].status[getId] = "Borrowed";
-                            userBook[0].dueDate[getId] = dueDate;
-                            userBook[0].borrowed += 1;
-                            await fetch(`http://localhost:5050/bookInventory/${userBook[0].id}`, {
+                            let getId = userBook.booksIds.indexOf(id);
+                            userBook.status[getId] = "Borrowed";
+                            userBook.dueDate[getId] = dueDate;
+                            userBook.borrowed += 1;
+                            await fetch(`http://localhost:5050/bookInventory/${userBook.id}`, {
                                 method: "PATCH",
                                 headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify(userBook[0])
+                                body: JSON.stringify(userBook)
                             });
                             const updatedBook = { ...book };
                             const formData = new FormData();
@@ -156,17 +154,16 @@ const BookInfo = () => {
                         return;
                     }
                     const bookRequested = async () => {
-                        const res = await fetch(`http://localhost:5050/bookInventory`);
+                        const res = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
                         if (!res.ok) throw new Error("Failed to get books! Try again later!");
                         let userBook = await res.json();
-                        userBook = userBook.filter(u => u.studentId === localStorage.getItem("userId"));
-                        let getId = userBook[0].booksIds.indexOf(id);
-                        userBook[0].status[getId] = "Requested";
-                        userBook[0].requested += 1;
-                        await fetch(`http://localhost:5050/bookInventory/${userBook[0].id}`, {
+                        let getId = userBook.booksIds.indexOf(id);
+                        userBook.status[getId] = "Requested";
+                        userBook.requested += 1;
+                        await fetch(`http://localhost:5050/bookInventory/${userBook.id}`, {
                             method: "PATCH",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(userBook[0])
+                            body: JSON.stringify(userBook)
                         });
                         let jsonData = new Object();
                         jsonData.studentId = localStorage.getItem("userId");

@@ -15,11 +15,10 @@ const StudentHome = () => {
     useEffect(() => {
         const getViewedBooks = async () => {
             try {
-                const res = await fetch(`http://localhost:5050/bookInventory`);
+                const res = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
-                data = data.filter(u => u.studentId === localStorage.getItem("userId"));
-                setBooks(data[0]);
+                setBooks(data);
             } catch (e) {
                 console.log(e);
             }
