@@ -3,11 +3,13 @@ import { overflow } from "../overflow"
 import { useNavigate } from "react-router-dom";
 import UploadImage from "../assets/UploadImage.png"
 import { addAdminLog } from "../adminLog";
+import Spinner from 'react-bootstrap/Spinner';
 const AddBook = () => {
     const navigate = useNavigate();
     useEffect(() => { overflow(true) }, []);
     const [bookImg, setBookImg] = useState("");
     const [bookLocImg, setBookLocImg] = useState("");
+    const [loading, getLoading] = useState(false);
     const upload = (fromImg) => {
         const file = document.getElementById(fromImg).files[0];
         if (file.type.startsWith('image/')) {
@@ -20,62 +22,63 @@ const AddBook = () => {
         }
     }
     const addBook = async () => {
-        //basic input validation, we assume the admin is smart and there should not be any case-sensitive problems/everything entered should be roughly valid)
-        const title = document.getElementById("title").value
-        const author = document.getElementById("author").value
-        const bookImage = document.getElementById("bookImg").value
-        const publisher = document.getElementById("publisher").value
-        const isbn = Number(document.getElementById("identifier").value)
-        const availability = document.getElementById("availability").value == "true";
-        const copies = Number(document.getElementById("copies").value)
-        const location = document.getElementById("location").value
-        const bookLoc = document.getElementById("bookLoc").value
-        const level = Number(document.getElementById("level").value)
-        const fiction = document.getElementById("fiction").value == "true"
-        if (!title.trim() || !author.trim() || !publisher.trim() || !location.trim() || !bookImage || !isbn || copies === "" || availability === "" || level === "" || fiction === "") {
-            alert("Cannot proceed! There are empty input values!");
-            return;
-        } else if (!bookLoc && location !== "Closed Stacks") {
-            alert("Cannot proceed! There are empty input values!");
-            return;
-        } else if (copies < 0 || isbn < 0) {
-            alert("Cannot proceed! ISBN & Copies must be appropriate numeric values!");
-            return;
-        } else if (isbn.toString().length < 10) {
-            alert("Cannot proceed! ISBN has to be an unique number with ten or more characters!");
-            return;
-        } else if (location === "Closed Stacks" && level != 0) {
-            alert("Cannot proceed! Location & Level must match appropriately!");
-            return;
-        } else if (location !== "Closed Stacks" && level == 0) {
-            alert("Cannot proceed! Location & Level must match appropriately!");
-            return;
-        }
-        let id;
+        getLoading(true)
         try {
-            const res = await fetch(`http://localhost:5050/libraryData`);
-            if (!res.ok) throw new Error("Failed to get books! Try again later!");
-            let data = await res.json();
-            const bookIds = data.map(book => book.id);
-            id = `B${bookIds.length + 1}`
-        } catch (e) {
-            console.log(e);
-            return;
-        }
-        let formData = new FormData();
-        formData.append("id", id);
-        formData.append("location", location);
-        formData.append("availability", availability);
-        formData.append("identifier", isbn);
-        formData.append("copies", copies);
-        formData.append("title", title);
-        formData.append("author", author);
-        formData.append("bookImage", bookImg);
-        formData.append("publisher", publisher);
-        formData.append("imgLocation", bookLocImg);
-        formData.append("level", level);
-        formData.append("fiction", fiction);
-        try {
+            //basic input validation, we assume the admin is smart and there should not be any case-sensitive problems/everything entered should be roughly valid)
+            const title = document.getElementById("title").value
+            const author = document.getElementById("author").value
+            const bookImage = document.getElementById("bookImg").value
+            const publisher = document.getElementById("publisher").value
+            const isbn = Number(document.getElementById("identifier").value)
+            const availability = document.getElementById("availability").value == "true";
+            const copies = Number(document.getElementById("copies").value)
+            const location = document.getElementById("location").value
+            const bookLoc = document.getElementById("bookLoc").value
+            const level = Number(document.getElementById("level").value)
+            const fiction = document.getElementById("fiction").value == "true"
+            if (!title.trim() || !author.trim() || !publisher.trim() || !location.trim() || !bookImage || !isbn || copies === "" || availability === "" || level === "" || fiction === "") {
+                alert("Cannot proceed! There are empty input values!");
+                return;
+            } else if (!bookLoc && location !== "Closed Stacks") {
+                alert("Cannot proceed! There are empty input values!");
+                return;
+            } else if (copies < 0 || isbn < 0) {
+                alert("Cannot proceed! ISBN & Copies must be appropriate numeric values!");
+                return;
+            } else if (isbn.toString().length < 10) {
+                alert("Cannot proceed! ISBN has to be an unique number with ten or more characters!");
+                return;
+            } else if (location === "Closed Stacks" && level != 0) {
+                alert("Cannot proceed! Location & Level must match appropriately!");
+                return;
+            } else if (location !== "Closed Stacks" && level == 0) {
+                alert("Cannot proceed! Location & Level must match appropriately!");
+                return;
+            }
+            let id;
+            try {
+                const res = await fetch(`http://localhost:5050/libraryData`);
+                if (!res.ok) throw new Error("Failed to get books! Try again later!");
+                let data = await res.json();
+                const bookIds = data.map(book => book.id);
+                id = `B${bookIds.length + 1}`
+            } catch (e) {
+                console.log(e);
+                return;
+            }
+            let formData = new FormData();
+            formData.append("id", id);
+            formData.append("location", location);
+            formData.append("availability", availability);
+            formData.append("identifier", isbn);
+            formData.append("copies", copies);
+            formData.append("title", title);
+            formData.append("author", author);
+            formData.append("bookImage", bookImg);
+            formData.append("publisher", publisher);
+            formData.append("imgLocation", bookLocImg);
+            formData.append("level", level);
+            formData.append("fiction", fiction);
             await fetch(`http://localhost:5050/libraryData`, {
                 method: "POST",
                 body: formData
@@ -86,6 +89,8 @@ const AddBook = () => {
         } catch (e) {
             console.log(e);
             return;
+        } finally {
+            getLoading(false)
         }
     }
     return (
@@ -169,6 +174,13 @@ const AddBook = () => {
                     <option value={false}>No</option>
                 </select>
             </div>
+            {loading && (
+                <div className="d-flex flex-column justify-content-center align-items-center">
+                    <br></br>
+                    <Spinner animation="border" role="status" />
+                    <span>Adding Book...</span>
+                </div>
+            )}
             <button id="addBtn" onClick={addBook}>
                 Add Book
             </button>

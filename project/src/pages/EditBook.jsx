@@ -4,11 +4,12 @@ import { overflow } from "../overflow"
 import { useEffect, useState } from "react";
 import UploadImage from "../assets/UploadImage.png"
 import { addAdminLog } from "../adminLog";
-
+import Spinner from 'react-bootstrap/Spinner';
 const EditBook = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [book, bookInfo] = useState({});
+    const [loading, getLoading] = useState(false);
     useEffect(() => { overflow(true) }, []);
     useEffect(() => { }, [id]);
     useEffect(() => {
@@ -39,51 +40,52 @@ const EditBook = () => {
         }
     }
     const editBook = async () => {
-        const title = document.getElementById("title").value
-        const author = document.getElementById("author").value
-        const bookImage = document.getElementById("bookImg").value
-        const publisher = document.getElementById("publisher").value
-        const isbn = Number(document.getElementById("identifier").value)
-        const availability = document.getElementById("availability").value == "true";
-        const copies = Number(document.getElementById("copies").value)
-        const location = document.getElementById("location").value
-        const bookLoc = document.getElementById("bookLoc").value
-        const level = Number(document.getElementById("level").value)
-        const fiction = document.getElementById("fiction").value == "true"
-        if (!title.trim() || !author.trim() || !publisher.trim() || !location.trim() || !isbn || copies === "" || availability === "" || level === "" || fiction === "") {
-            alert("Cannot proceed! There are empty input values!");
-            return;
-        } else if (copies < 0 || isbn < 0) {
-            alert("Cannot proceed! ISBN & Copies must be appropriate numeric values!");
-            return;
-        } else if (isbn.toString().length < 10) {
-            alert("Cannot proceed! ISBN has to be an unique number with ten or more characters!");
-            return;
-        } else if (location === "Closed Stacks" && level != 0) {
-            alert("Cannot proceed! Location & Level must match appropriately!");
-            return;
-        } else if (location !== "Closed Stacks" && level == 0) {
-            alert("Cannot proceed! Location & Level must match appropriately!");
-            return;
-        }
-        let formData = new FormData();
-        formData.append("id", id);
-        formData.append("location", location);
-        formData.append("availability", availability);
-        formData.append("identifier", isbn);
-        formData.append("copies", copies);
-        formData.append("title", title);
-        formData.append("author", author);
-        formData.append("fiction", fiction);
-        if (bookImage) {
-            formData.append("bookImage", bookImg);
-        }
-        formData.append("publisher", publisher);
-        if (bookLoc) {
-            formData.append("imgLocation", bookLocImg);
-        }
-        formData.append("level", level);
+        getLoading(true);
         try {
+            const title = document.getElementById("title").value
+            const author = document.getElementById("author").value
+            const bookImage = document.getElementById("bookImg").value
+            const publisher = document.getElementById("publisher").value
+            const isbn = Number(document.getElementById("identifier").value)
+            const availability = document.getElementById("availability").value == "true";
+            const copies = Number(document.getElementById("copies").value)
+            const location = document.getElementById("location").value
+            const bookLoc = document.getElementById("bookLoc").value
+            const level = Number(document.getElementById("level").value)
+            const fiction = document.getElementById("fiction").value == "true"
+            if (!title.trim() || !author.trim() || !publisher.trim() || !location.trim() || !isbn || copies === "" || availability === "" || level === "" || fiction === "") {
+                alert("Cannot proceed! There are empty input values!");
+                return;
+            } else if (copies < 0 || isbn < 0) {
+                alert("Cannot proceed! ISBN & Copies must be appropriate numeric values!");
+                return;
+            } else if (isbn.toString().length < 10) {
+                alert("Cannot proceed! ISBN has to be an unique number with ten or more characters!");
+                return;
+            } else if (location === "Closed Stacks" && level != 0) {
+                alert("Cannot proceed! Location & Level must match appropriately!");
+                return;
+            } else if (location !== "Closed Stacks" && level == 0) {
+                alert("Cannot proceed! Location & Level must match appropriately!");
+                return;
+            }
+            let formData = new FormData();
+            formData.append("id", id);
+            formData.append("location", location);
+            formData.append("availability", availability);
+            formData.append("identifier", isbn);
+            formData.append("copies", copies);
+            formData.append("title", title);
+            formData.append("author", author);
+            formData.append("fiction", fiction);
+            if (bookImage) {
+                formData.append("bookImage", bookImg);
+            }
+            formData.append("publisher", publisher);
+            if (bookLoc) {
+                formData.append("imgLocation", bookLocImg);
+            }
+            formData.append("level", level);
             await fetch(`http://localhost:5050/libraryData/${id}`, {
                 method: "PATCH",
                 body: formData
@@ -92,8 +94,10 @@ const EditBook = () => {
             navigate("/admin/logs");
             addAdminLog("edit", isbn, title);
         } catch (e) {
-            console.log(e);
-            return;
+            console.log(e)
+            return
+        } finally {
+            getLoading(false);
         }
     }
     return (
@@ -183,6 +187,13 @@ const EditBook = () => {
                     </select>
                 )}
             </div>
+            {loading && (
+                <div className="d-flex flex-column justify-content-center align-items-center">
+                    <br></br>
+                    <Spinner animation="border" role="status" />
+                    <span>Editing Book...</span>
+                </div>
+            )}
             <div className="d-flex flex-column justify-content-center align-items-center">
                 <button id="addBtn" onClick={editBook}>
                     Edit Book
