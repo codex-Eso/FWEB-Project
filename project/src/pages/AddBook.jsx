@@ -31,7 +31,8 @@ const AddBook = () => {
         const location = document.getElementById("location").value
         const bookLoc = document.getElementById("bookLoc").value
         const level = Number(document.getElementById("level").value)
-        if (!title.trim() || !author.trim() || !publisher.trim() || !location.trim() || !bookImage || !isbn || copies === "" || availability === "" || level === "") {
+        const fiction = document.getElementById("fiction").value == "true"
+        if (!title.trim() || !author.trim() || !publisher.trim() || !location.trim() || !bookImage || !isbn || copies === "" || availability === "" || level === "" || fiction === "") {
             alert("Cannot proceed! There are empty input values!");
             return;
         } else if (!bookLoc && location !== "Closed Stacks") {
@@ -73,6 +74,7 @@ const AddBook = () => {
         formData.append("publisher", publisher);
         formData.append("imgLocation", bookLocImg);
         formData.append("level", level);
+        formData.append("fiction", fiction);
         try {
             await fetch(`http://localhost:5050/libraryData`, {
                 method: "POST",
@@ -158,6 +160,14 @@ const AddBook = () => {
                         <text className="ms-1" id="bookLocImg">Upload Image</text>
                     </label>
                 </div>
+            </div>
+            <div className="input">
+                <text>Fiction?</text>
+                <br></br>
+                <select id="fiction">
+                    <option value={true}>Yes</option>
+                    <option value={false}>No</option>
+                </select>
             </div>
             <button id="addBtn" onClick={addBook}>
                 Add Book

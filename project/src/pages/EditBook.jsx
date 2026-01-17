@@ -49,7 +49,8 @@ const EditBook = () => {
         const location = document.getElementById("location").value
         const bookLoc = document.getElementById("bookLoc").value
         const level = Number(document.getElementById("level").value)
-        if (!title.trim() || !author.trim() || !publisher.trim() || !location.trim() || !isbn || copies === "" || availability === "" || level === "") {
+        const fiction = document.getElementById("fiction").value == "true"
+        if (!title.trim() || !author.trim() || !publisher.trim() || !location.trim() || !isbn || copies === "" || availability === "" || level === "" || fiction === "") {
             alert("Cannot proceed! There are empty input values!");
             return;
         } else if (copies < 0 || isbn < 0) {
@@ -73,6 +74,7 @@ const EditBook = () => {
         formData.append("copies", copies);
         formData.append("title", title);
         formData.append("author", author);
+        formData.append("fiction", fiction);
         if (bookImage) {
             formData.append("bookImage", bookImg);
         }
@@ -171,13 +173,22 @@ const EditBook = () => {
                     </label>
                 </div>
             </div>
+            <div className="input">
+                <text>Fiction?</text>
+                <br></br>
+                {book.fiction !== undefined && (
+                    <select id="fiction" defaultValue={book.fiction ? "true" : "false"}>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                )}
+            </div>
             <div className="d-flex flex-column justify-content-center align-items-center">
                 <button id="addBtn" onClick={editBook}>
                     Edit Book
                 </button>
                 <text className="mt-2 mb-1" style={{ fontWeight: "500", textDecoration: "underline", fontSize: 18, cursor: "pointer" }} onClick={() => navigate(-1)}>Back</text>
             </div>
-
         </div>
     )
 }

@@ -38,10 +38,10 @@ router.post("/", upload.fields([
     { name: "imgLocation", maxCount: 1 }
 ]), async (req, res) => {
     try {
-        const { id, location, availability, identifier, copies, title, author, publisher, level } = req.body;
+        const { id, location, availability, identifier, copies, title, author, publisher, level, fiction } = req.body;
         const bookImageUrl = req.files.bookImage?.[0].path;
         const imgLocationUrl = req.files.imgLocation?.[0].path;
-        if (!title.trim() || !author.trim() || !publisher.trim() || !location.trim() || !bookImageUrl || !identifier || copies === "" || availability === "" || level === "") {
+        if (!title.trim() || !author.trim() || !publisher.trim() || !location.trim() || !bookImageUrl || !identifier || copies === "" || availability === "" || level === "" || fiction === "") {
             throw new Error('Cannot proceed! There are empty input values!');
         } else {
             const newLibraryBook = new LibraryData({
@@ -55,7 +55,8 @@ router.post("/", upload.fields([
                 bookImage: bookImageUrl,
                 publisher,
                 imgLocation: imgLocationUrl,
-                level
+                level,
+                fiction
             })
             await newLibraryBook.save();
             return res.status(200).json({ message: "Added" });

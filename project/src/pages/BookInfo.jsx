@@ -50,6 +50,7 @@ const BookInfo = () => {
                         body: JSON.stringify(data[0])
                     });
                 } else if (getRole() === "student") {
+                    if (!book || book.fiction === undefined) return;
                     const res = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
                     if (!res.ok) throw new Error("Failed to get books! Try again later!");
                     let data = await res.json();
@@ -65,6 +66,11 @@ const BookInfo = () => {
                         data.booksIds.unshift(id);
                         data.status.unshift("Viewed");
                         data.dueDate.unshift("");
+                        if (book.fiction == true) {
+                            data.fictionCount.fiction += 1;
+                        } else {
+                            data.fictionCount.nonFiction += 1;
+                        }
                     }
                     setBookState(data.status[0]);
                     setBorrowedCount(data.borrowed);
@@ -80,7 +86,7 @@ const BookInfo = () => {
             }
         }
         getUserBooks();
-    }, [id])
+    })
     const action = (getAction) => {
         if (getRole() === "student") {
             if (book.location === "Closed Stacks" && getAction === "Borrow") {

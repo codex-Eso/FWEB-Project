@@ -11,7 +11,8 @@ const librarySchema = new mongoose.Schema({
     bookImage: String,
     publisher: String,
     imgLocation: String,
-    level: Number
+    level: Number,
+    fiction: Boolean
 })
 
 export default mongoose.model("LibraryData", librarySchema, "libraryData")
