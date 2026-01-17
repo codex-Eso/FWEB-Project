@@ -1,3 +1,4 @@
+//ask Colin if the simple AI recommendation ok or not (hopefully bruhh)
 import express from "express";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
@@ -5,6 +6,7 @@ import LibraryData from "../models/libraryData.js";
 import BookInventory from "../models/bookInventory.js";
 dotenv.config();
 const router = express.Router();
+//use ai to recommend 3 books that are under the user preference of fiction/non-fiction (all the books must be available)
 router.get("/:userId", async (req, res) => {
     const { userId } = req.params;
     try {
@@ -20,7 +22,7 @@ router.get("/:userId", async (req, res) => {
             });
             const bookList = books
                 .map((book) => {
-                    return `Title: ${book.title}\nGenre: ${book.genre}\nLevel: ${book.level}\n`;
+                    return `Title: ${book.title}\nBook Id: ${book.id}\n`;
                 })
                 .join("\n");
             prompt = `
@@ -35,7 +37,7 @@ ${bookList}
             books = await LibraryData.find({ availability: true });
             const bookList = books
                 .map((book) => {
-                    return `Title: ${book.title}\nGenre: ${book.genre}\nLevel: ${book.level}\n`;
+                    return `Title: ${book.title}\nBook Id: ${book.id}\n`;
                 })
                 .join("\n");
             prompt = `
@@ -69,7 +71,9 @@ ${bookList}
             return res.status(500).json({ message: "Groq error: " + JSON.stringify(data) });
         }
         const aiResponse = data.choices?.[0]?.message?.content?.trim() || "No response from model.";
-        return res.json({ recommendations: aiResponse });
+        let bookTitles = await LibraryData.find();
+        bookTitles = bookTitles.filter(b => aiResponse.includes(b.title));
+        return res.json({ recommendations: aiResponse, titles: bookTitles });
     } catch (err) {
         console.error(err);
     }
