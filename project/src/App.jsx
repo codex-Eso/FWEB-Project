@@ -15,6 +15,7 @@ import BookInfo from './pages/BookInfo'
 import './App.css'
 import EditBook from './pages/EditBook'
 import Others from './pages/Others'
+import Recommended from './pages/Recommended'
 
 function App() {
   const [role, getRole] = useState(localStorage.getItem("loginRole"));
@@ -42,6 +43,7 @@ function App() {
           <Route path="/student" element={<Student />}>
             <Route index element={<StudentHome />} />
             <Route path="inventory" element={<Inventory />} />
+            <Route path="recommended" element={<Recommended />} />
             <Route path="notification" element={<Notification />} />
             <Route path="book/:id" element={<BookInfo />} />
             <Route path='others' element={<Others />} />

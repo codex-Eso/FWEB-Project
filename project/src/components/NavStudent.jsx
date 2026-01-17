@@ -65,6 +65,7 @@ const NavStudent = () => {
                         <Nav className='me-auto'>
                             <Nav.Link onClick={() => document.getElementById("notification").style.textDecoration = "none"} as={NavLink} to="/student" end>Home</Nav.Link>
                             <Nav.Link onClick={() => document.getElementById("notification").style.textDecoration = "none"} as={NavLink} to="/student/inventory">Your Books</Nav.Link>
+                            <Nav.Link onClick={() => document.getElementById("notification").style.textDecoration = "none"} as={NavLink} to="/student/recommended">Recommended</Nav.Link>
                             <Nav.Link id='notification' onClick={() => { checkToShow(true); document.getElementById("notification").style.textDecoration = "underline"; }}>Notification</Nav.Link>
                             <Nav.Link onClick={() => document.getElementById("notification").style.textDecoration = "none"} as={NavLink} to="/student/others">Others</Nav.Link>
                             <Nav.Link onClick={() => { logout(); document.getElementById("notification").style.textDecoration = "none"; }}>Logout</Nav.Link>

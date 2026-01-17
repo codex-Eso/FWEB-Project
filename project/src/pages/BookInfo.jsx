@@ -71,6 +71,15 @@ const BookInfo = () => {
                         } else {
                             data.fictionCount.nonFiction += 1;
                         }
+                        if (book.level == 0) {
+                            data.levels.closedStacks += 1;
+                        } else if (book.level == 6) {
+                            data.levels.level6 += 1;
+                        } else if (book.level == 7) {
+                            data.levels.level7 += 1;
+                        } else if (book.level == 8) {
+                            data.levels.level8 += 1;
+                        }
                     }
                     setBookState(data.status[0]);
                     setBorrowedCount(data.borrowed);

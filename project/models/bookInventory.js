@@ -8,7 +8,8 @@ const bookInventorySchema = new mongoose.Schema({
     dueDate: [String],
     borrowed: Number,
     requested: Number,
-    fictionCount: Object
+    fictionCount: Object,
+    levels: Object
 })
 
 export default mongoose.model("BookInventory", bookInventorySchema, "bookInventory")
