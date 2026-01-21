@@ -21,4 +21,21 @@ router.get("/:id", async (req, res) => {
     }
 })
 
+router.patch("/:id", async (req, res) => {
+    try {
+        const userUpdate = req.body;
+        if (!userUpdate) {
+            throw new Error('Cannot proceed! Empty data given!')
+        } else {
+            await Users.findByIdAndUpdate(
+                req.params.id,
+                { $set: userUpdate }
+            )
+            return res.status(200).json({ message: "Updated" });
+        }
+    } catch (error) {
+        console.error(error);
+    }
+})
+
 export default router

@@ -2,7 +2,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
-import LibraryData from "../models/libraryData.js";
+import LibraryBooks from "../models/libraryBooks.js";
 import BookInventory from "../models/bookInventory.js";
 dotenv.config();
 const router = express.Router();
@@ -16,7 +16,7 @@ router.get("/:userId", async (req, res) => {
         let books;
         let prompt;
         if (userData.booksIds.length !== 0) {
-            books = await LibraryData.find({
+            books = await LibraryBooks.find({
                 availability: true,
                 fiction: fictionPref,
             });
@@ -34,7 +34,7 @@ Available books:
 ${bookList}
 `;
         } else {
-            books = await LibraryData.find({ availability: true });
+            books = await LibraryBooks.find({ availability: true });
             const bookList = books
                 .map((book) => {
                     return `Title: ${book.title}\nBook Id: ${book.id}\n`;
@@ -71,7 +71,7 @@ ${bookList}
             return res.status(500).json({ message: "Groq error: " + JSON.stringify(data) });
         }
         const aiResponse = data.choices?.[0]?.message?.content?.trim() || "No response from model.";
-        let bookTitles = await LibraryData.find();
+        let bookTitles = await LibraryBooks.find();
         bookTitles = bookTitles.filter(b => aiResponse.includes(b.title));
         return res.json({ recommendations: aiResponse, titles: bookTitles });
     } catch (err) {

@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import users from "./routes/users.js";
-import libraryData from "./routes/libraryData.js";
+import libraryBooks from "./routes/libraryBooks.js";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import adminBooks from "./routes/adminBooks.js";
@@ -28,7 +28,7 @@ app.use('/adminLogs', adminLogs)
 app.use('/notification', notification)
 app.use('/bookInventory', bookInventory)
 app.use('/adminBooks', adminBooks)
-app.use('/libraryData', libraryData);
+app.use('/libraryBooks', libraryBooks);
 app.use("/users", users);
 app.get("/", async (req, res) => {
     res.send("<h1>Welcome to my API! The server is running successfully.</h1>");

@@ -15,7 +15,7 @@ const EditBook = () => {
     useEffect(() => {
         const getBookInfo = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/libraryData/${id}`);
+                const res = await fetch(`http://localhost:5000/libraryBooks/${id}`);
                 if (!res.ok) throw new Error("Failed to get book! Try again later!");
                 let data = await res.json();
                 bookInfo(data);
@@ -86,7 +86,7 @@ const EditBook = () => {
                 formData.append("imgLocation", bookLocImg);
             }
             formData.append("level", level);
-            await fetch(`http://localhost:5000/libraryData/${id}`, {
+            await fetch(`http://localhost:5000/libraryBooks/${id}`, {
                 method: "PATCH",
                 body: formData
             });

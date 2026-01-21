@@ -91,7 +91,7 @@ const AuditLog = () => {
             notification.studentId = uId;
             notification.message = `Dear Student, the library book, ${title}, is now ready for collection! Please collect the book within 3 days.`
             notification.messageTime = (new Date()).toISOString();
-            let books = await fetch("http://localhost:5000/libraryData");
+            let books = await fetch("http://localhost:5000/libraryBooks");
             books = await books.json();
             //ask Colin
             books = books.filter((b) => b.identifier == isbn);
@@ -102,21 +102,26 @@ const AuditLog = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(notification)
             });
-            let updatedBook = await fetch(`http://localhost:5000/bookInventory/${uId}`);
+            let updatedBook = await fetch(`http://localhost:5000/bookInventory/${uId}/${bookId}`);
             updatedBook = await updatedBook.json();
-            let bookIndex = updatedBook.booksIds.indexOf(bookId);
-            updatedBook.status[bookIndex] = "Collecting";
+            updatedBook.status = "Collecting";
             const tdyDate = new Date();
             let dueDate = new Date(tdyDate);
             dueDate.setDate(tdyDate.getDate() + 3);
             dueDate = dueDate.toISOString();
-            updatedBook.dueDate[bookIndex] = dueDate;
-            updatedBook.requested -= 1;
+            updatedBook.dueDate = dueDate;
             await fetch(`http://localhost:5000/bookInventory/${updatedBook.id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updatedBook)
             });
+            let getUser = new Object();
+            getUser.requested -= 1;
+            await fetch(`http://localhost:5000/users/${uId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(getUser)
+            })
             addAdminLog("accepted", isbn, title);
             let adminNoti = await fetch(`http://localhost:5000/adminLogs`);
             adminNoti = await adminNoti.json();
@@ -135,7 +140,7 @@ const AuditLog = () => {
             notification.studentId = uId;
             notification.message = `Dear Student, the library book, ${title}, has been rejected for collection by the admin.`
             notification.messageTime = (new Date()).toISOString();
-            let books = await fetch("http://localhost:5000/libraryData");
+            let books = await fetch("http://localhost:5000/libraryBooks");
             books = await books.json();
             //ask Colin
             books = books.filter((b) => b.identifier == isbn);
@@ -146,16 +151,21 @@ const AuditLog = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(notification)
             });
-            let updatedBook = await fetch(`http://localhost:5000/bookInventory/${uId}`);
+            let updatedBook = await fetch(`http://localhost:5000/bookInventory/${uId}/${bookId}`);
             updatedBook = await updatedBook.json();
-            let bookIndex = updatedBook.booksIds.indexOf(bookId);
-            updatedBook.status[bookIndex] = "Cancelled";
-            updatedBook.requested -= 1;
+            updatedBook.status = "Cancelled";
             await fetch(`http://localhost:5000/bookInventory/${updatedBook.id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updatedBook)
             });
+            let getUser = new Object();
+            getUser.requested -= 1;
+            await fetch(`http://localhost:5000/users/${uId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(getUser)
+            })
             addAdminLog("cancelled", isbn, title);
             let adminNoti = await fetch(`http://localhost:5000/adminLogs`);
             adminNoti = await adminNoti.json();

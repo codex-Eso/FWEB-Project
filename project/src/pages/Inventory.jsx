@@ -27,6 +27,7 @@ const formatDueDate = (isoString) => {
 const Inventory = () => {
     const navigate = useNavigate();
     useEffect(() => { overflow(true) }, []);
+    const [actualUser, setUser] = useState({});
     const [state, setState] = useState("All");
     const [books, getBooks] = useState({});
     const [allBooks, getAllBooks] = useState([]);
@@ -37,9 +38,18 @@ const Inventory = () => {
         navigate(`/student/book/${id}`);
     }
     useEffect(() => {
+        const userData = async () => {
+            const getUser = await fetch(`http://localhost:5000/users/${localStorage.getItem("userId")}`)
+            if (!getUser.ok) throw new Error("Failed to get users! Try again later!");
+            let user = await getUser.json();
+            setUser(user);
+        }
+        userData();
+    }, [])
+    useEffect(() => {
         const bookInventory = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}`);
+                const res = await fetch(`http://localhost:5000/bookInventory?studentId=${localStorage.getItem("userId")}`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
                 getBooks(data);
@@ -49,7 +59,7 @@ const Inventory = () => {
         }
         const libraryBooks = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/libraryData`);
+                const res = await fetch(`http://localhost:5000/libraryBooks`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
                 getAllBooks(data);
@@ -65,17 +75,22 @@ const Inventory = () => {
         document.getElementById(state).style.color = "#E53935";
     }, [state, books])
     const cancelRequest = async (id, title) => {
-        const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}`);
+        const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}/${id}`);
         if (!res.ok) throw new Error("Failed to get books! Try again later!");
         let userBook = await res.json();
-        let getId = userBook.booksIds.indexOf(id);
-        userBook.status[getId] = "Cancelled";
-        userBook.requested -= 1;
+        userBook.status = "Cancelled";
         try {
-            await fetch(`http://localhost:5000/bookInventory/${userBook.id}`, {
+            await fetch(`http://localhost:5000/bookInventory/${userBook._id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(userBook)
+            });
+            let userUpdate = actualUser
+            userUpdate.requested = actualUser.requested - 1;
+            await fetch(`http://localhost:5000/users/${localStorage.getItem("userId")}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(userUpdate)
             });
             let jsonData = new Object();
             jsonData.studentId = localStorage.getItem("userId");
@@ -90,7 +105,7 @@ const Inventory = () => {
             });
             alert("Request cancelled!");
             getBooks(userBook);
-            let bookInfo = await fetch(`http://localhost:5000/libraryData/${id}`)
+            let bookInfo = await fetch(`http://localhost:5000/libraryBooks/${id}`)
             bookInfo = await bookInfo.json();
             addAdminLog("cancelled", bookInfo.identifier, bookInfo.title, localStorage.getItem("userId"));
             let adminNoti = await fetch(`http://localhost:5000/adminLogs`);
@@ -107,13 +122,12 @@ const Inventory = () => {
     const renew = async (id, title) => {
         try {
             //due to complexity, I will not be adding the logic for letting 1 renew per book only            
-            let userBook = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}`);
+            let userBook = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}/${id}`);
             userBook = await userBook.json();
-            let i = userBook.booksIds.indexOf(id);
             let getDate = new Date(userBook.dueDate[i]);
             getDate.setDate(getDate.getDate() + 3);
-            userBook.dueDate[i] = getDate;
-            await fetch(`http://localhost:5000/bookInventory/${userBook.id}`, {
+            userBook.dueDate = getDate;
+            await fetch(`http://localhost:5000/bookInventory/${userBook._id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(userBook)

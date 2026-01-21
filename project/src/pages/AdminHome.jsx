@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { overflow } from "../overflow";
 import NoBooks from "../components/NoBooks";
 const AdminHome = () => {
-    const [books, setBooks] = useState({})
+    const [books, setBooks] = useState([])
     const [allBooks, getBooks] = useState([])
     const [searchQuery, setSearchQuery] = useState("");
     const [bookResults, getBookResults] = useState([]);
@@ -17,14 +17,14 @@ const AdminHome = () => {
                 const res = await fetch(`http://localhost:5000/adminBooks`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
-                setBooks(data[0]);
+                setBooks(data);
             } catch (e) {
                 console.log(e);
             }
         }
         const getAllBooks = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/libraryData`);
+                const res = await fetch(`http://localhost:5000/libraryBooks`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
                 getBooks(data);
@@ -39,13 +39,14 @@ const AdminHome = () => {
         navigate(`book/${id}`);
     }
     var booksDisplay = 0;
-    const viewedBooks = books.bookIds?.map((id) => {
+    console.log(books)
+    const viewedBooks = books.map((b) => {
         if (booksDisplay === 3) return null;
-        const matchedBooks = allBooks.find(book => book.id === id);
+        const matchedBooks = allBooks.find(book => book.id === b.bookId);
         if (!matchedBooks) return null;
         booksDisplay++;
         return (
-            <div id="bookInfo" onClick={() => navToBook(matchedBooks.id)} className="ViewedBox" key={id}>
+            <div id="bookInfo" onClick={() => navToBook(matchedBooks.id)} className="ViewedBox" key={b.bookId}>
                 <img src={matchedBooks.bookImage} />
                 <div className="d-flex flex-column text-start fs-5 ps-3 viewBookText">
                     <text>{matchedBooks.title}</text>

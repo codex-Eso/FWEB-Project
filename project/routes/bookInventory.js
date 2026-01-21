@@ -3,9 +3,35 @@ import BookInventory from "../models/bookInventory.js";
 
 const router = express.Router();
 
-router.get("/:studentId", async (req, res) => {
+router.get("/", async (req, res) => {
     try {
-        const bookInventory = await BookInventory.findOne({ studentId: req.params.studentId });
+        const { studentId, viewStatus } = req.query;
+        let getBooks;
+        if (viewStatus != undefined) {
+            getBooks = await BookInventory.find({ studentId: studentId, status: viewStatus });
+        } else {
+            getBooks = await BookInventory.find({ studentId: studentId });
+        }
+        return res.status(200).json(getBooks);
+    } catch (error) {
+        console.error(error);
+    }
+})
+
+router.get('/:studentId', async (req, res) => {
+    try {
+        const bookInventory = await BookInventory.find({ studentId: req.params.studentId });
+        let bookPosition = [];
+        bookInventory.map(b => bookPosition.push(b.position))
+        return res.status(200).json(Math.max(...bookPosition));
+    } catch (error) {
+        console.error(error);
+    }
+})
+
+router.get("/:studentId/:bookId", async (req, res) => {
+    try {
+        const bookInventory = await BookInventory.findOne({ studentId: req.params.studentId, bookId: req.params.bookId });
         return res.status(200).json(bookInventory);
     } catch (error) {
         console.error(error);
@@ -19,10 +45,31 @@ router.patch("/:id", async (req, res) => {
             throw new Error('Cannot proceed! Empty data given!')
         } else {
             await BookInventory.findOneAndUpdate(
-                { id: req.params.id },
+                { _id: req.params.id },
                 { $set: updateInventory }
             )
             return res.status(200).json({ message: "Updated" });
+        }
+    } catch (error) {
+        console.error(error);
+    }
+})
+
+router.post("/", async (req, res) => {
+    try {
+        const { studentId, bookId, status, dueDate, position } = req.body;
+        if (!studentId || !bookId || !status || !dueDate || !position) {
+            throw new Error('Cannot proceed! There are empty input values!');
+        } else {
+            const newUserBook = new BookInventory({
+                studentId,
+                bookId,
+                status,
+                dueDate,
+                position
+            })
+            await newUserBook.save();
+            return res.status(200).json({ message: "Added" });
         }
     } catch (error) {
         console.error(error);

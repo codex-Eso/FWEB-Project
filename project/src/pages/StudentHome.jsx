@@ -15,7 +15,7 @@ const StudentHome = () => {
     useEffect(() => {
         const getViewedBooks = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}`);
+                const res = await fetch(`http://localhost:5000/bookInventory?studentId=${localStorage.getItem("userId")}&viewStatus=Viewed`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
                 setBooks(data);
@@ -25,7 +25,7 @@ const StudentHome = () => {
         }
         const getAllBooks = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/libraryData`);
+                const res = await fetch(`http://localhost:5000/libraryBooks`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
                 getBooks(data);

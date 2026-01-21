@@ -57,7 +57,7 @@ const AddBook = () => {
             }
             let id;
             try {
-                const res = await fetch(`http://localhost:5000/libraryData`);
+                const res = await fetch(`http://localhost:5000/libraryBooks`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
                 const bookIds = data.map(book => book.id);
@@ -79,7 +79,7 @@ const AddBook = () => {
             formData.append("imgLocation", bookLocImg);
             formData.append("level", level);
             formData.append("fiction", fiction);
-            await fetch(`http://localhost:5000/libraryData`, {
+            await fetch(`http://localhost:5000/libraryBooks`, {
                 method: "POST",
                 body: formData
             });

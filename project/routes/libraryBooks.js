@@ -1,14 +1,14 @@
 import express from "express";
 import multer from "multer";
 import { storage } from "../cloudinary.js";
-import LibraryData from '../models/libraryData.js'
+import LibraryBooks from '../models/libraryBooks.js'
 
 const router = express.Router();
 const upload = multer({ storage });
 
 router.get("/", async (req, res) => {
     try {
-        const library = await LibraryData.find();
+        const library = await LibraryBooks.find();
         return res.status(200).json(library);
     } catch (error) {
         console.error(error);
@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
     try {
-        const library = await LibraryData.findOne({ id: req.params.id });
+        const library = await LibraryBooks.findOne({ id: req.params.id });
         return res.status(200).json(library);
     } catch (error) {
         console.error(error);
@@ -26,7 +26,7 @@ router.get("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
     try {
-        await LibraryData.findOneAndDelete({ id: req.params.id });
+        await LibraryBooks.findOneAndDelete({ id: req.params.id });
         return res.status(200).json({ message: "Deleted" });
     } catch (error) {
         console.error(error);
@@ -44,7 +44,7 @@ router.post("/", upload.fields([
         if (!title.trim() || !author.trim() || !publisher.trim() || !location.trim() || !bookImageUrl || !identifier || copies === "" || availability === "" || level === "" || fiction === "") {
             throw new Error('Cannot proceed! There are empty input values!');
         } else {
-            const newLibraryBook = new LibraryData({
+            const newLibraryBook = new LibraryBooks({
                 id,
                 location,
                 availability,
@@ -81,7 +81,7 @@ router.patch("/:id", upload.fields([
             if (req.files.imgLocation) {
                 updatedBook.imgLocation = req.files.imgLocation[0].path;
             }
-            await LibraryData.findOneAndUpdate(
+            await LibraryBooks.findOneAndUpdate(
                 { id: req.params.id },
                 { $set: updatedBook }
             )

@@ -12,18 +12,15 @@ router.get("/", async (req, res) => {
     }
 })
 
-router.patch("/", async (req, res) => {
+router.post("/", async (req, res) => {
     try {
-        const newAdminBooks = req.body;
-        if (!newAdminBooks) {
-            throw new Error('Cannot proceed! Empty data given!')
-        } else {
-            await AdminBooks.findOneAndUpdate(
-                { id: "AB1" },
-                { $set: newAdminBooks }
-            )
-            return res.status(200).json({ message: "Updated" });
-        }
+        const { adminBookId } = req.body;
+        const adminbook = new AdminBooks({
+            id: "AB1",
+            adminBookId
+        })
+        await adminbook.save();
+        return res.status(200).json({ message: "Added" });
     } catch (error) {
         console.error(error);
     }

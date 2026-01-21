@@ -15,4 +15,4 @@ const librarySchema = new mongoose.Schema({
     fiction: Boolean
 })
 
-export default mongoose.model("LibraryData", librarySchema, "libraryData")
+export default mongoose.model("LibraryBooks", librarySchema, "libraryBooks")

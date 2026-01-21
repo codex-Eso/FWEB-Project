@@ -1,15 +1,11 @@
 import mongoose from "mongoose";
 
 const bookInventorySchema = new mongoose.Schema({
-    id: String,
     studentId: String,
-    booksIds: [String],
-    status: [String],
-    dueDate: [String],
-    borrowed: Number,
-    requested: Number,
-    fictionCount: Object,
-    levels: Object
+    bookId: String,
+    status: String,
+    dueDate: String,
+    position: Number
 })
 
 export default mongoose.model("BookInventory", bookInventorySchema, "bookInventory")

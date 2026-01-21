@@ -7,7 +7,15 @@ const userSchema = new mongoose.Schema({
     id: String,
     name: String,
     username: String,
-    password: String
-})
+    password: String,
+    borrowed: Number,
+    requested: Number,
+    nonFictionCount: Number,
+    fictionCount: Number,
+    closedStacks: Number,
+    level6: Number,
+    level7: Number,
+    level8: Number
+}, { strict: false })
 
 export default mongoose.model("Users", userSchema, "users")
