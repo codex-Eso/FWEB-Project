@@ -20,7 +20,7 @@ const BookInfo = () => {
     useEffect(() => {
         const getBookInfo = async () => {
             try {
-                const res = await fetch(`http://localhost:5050/libraryData/${id}`);
+                const res = await fetch(`http://localhost:5000/libraryData/${id}`);
                 if (!res.ok) throw new Error("Failed to get book! Try again later!");
                 let data = await res.json();
                 actualBook(data);
@@ -34,7 +34,7 @@ const BookInfo = () => {
         const getUserBooks = async () => {
             try {
                 if (getRole() === "admin") {
-                    const res = await fetch(`http://localhost:5050/adminBooks`);
+                    const res = await fetch(`http://localhost:5000/adminBooks`);
                     if (!res.ok) throw new Error("Failed to get books! Try again later!");
                     let data = await res.json();
                     const getBook = data[0].bookIds.indexOf(id);
@@ -44,14 +44,14 @@ const BookInfo = () => {
                     } else {
                         data[0].bookIds.unshift(id);
                     }
-                    await fetch(`http://localhost:5050/adminBooks`, {
+                    await fetch(`http://localhost:5000/adminBooks`, {
                         method: "PATCH",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(data[0])
                     });
                 } else if (getRole() === "student") {
                     if (!book || book.fiction === undefined) return;
-                    const res = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
+                    const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}`);
                     if (!res.ok) throw new Error("Failed to get books! Try again later!");
                     let data = await res.json();
                     const getBook = data.booksIds.indexOf(id);
@@ -84,7 +84,7 @@ const BookInfo = () => {
                     setBookState(data.status[0]);
                     setBorrowedCount(data.borrowed);
                     setRequestedCount(data.requested);
-                    await fetch(`http://localhost:5050/bookInventory/${data.id}`, {
+                    await fetch(`http://localhost:5000/bookInventory/${data.id}`, {
                         method: "PATCH",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(data)
@@ -120,14 +120,14 @@ const BookInfo = () => {
                             let dueDate = new Date(tdyDate);
                             dueDate.setDate(tdyDate.getDate() + 28);
                             dueDate = dueDate.toISOString();
-                            const res = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
+                            const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}`);
                             if (!res.ok) throw new Error("Failed to get books! Try again later!");
                             let userBook = await res.json();
                             let getId = userBook.booksIds.indexOf(id);
                             userBook.status[getId] = "Borrowed";
                             userBook.dueDate[getId] = dueDate;
                             userBook.borrowed += 1;
-                            await fetch(`http://localhost:5050/bookInventory/${userBook.id}`, {
+                            await fetch(`http://localhost:5000/bookInventory/${userBook.id}`, {
                                 method: "PATCH",
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify(userBook)
@@ -140,7 +140,7 @@ const BookInfo = () => {
                                 updatedBook.availability = false;
                                 formData.append('availability', updatedBook.availability);
                             }
-                            await fetch(`http://localhost:5050/libraryData/${id}`, {
+                            await fetch(`http://localhost:5000/libraryData/${id}`, {
                                 method: "PATCH",
                                 body: formData
                             });
@@ -151,7 +151,7 @@ const BookInfo = () => {
                             let getDate = new Date();
                             jsonData.messageTime = getDate.toISOString();
                             jsonData.bookId = id;
-                            await fetch(`http://localhost:5050/notification`, {
+                            await fetch(`http://localhost:5000/notification`, {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify(jsonData)
@@ -169,13 +169,13 @@ const BookInfo = () => {
                         return;
                     }
                     const bookRequested = async () => {
-                        const res = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
+                        const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}`);
                         if (!res.ok) throw new Error("Failed to get books! Try again later!");
                         let userBook = await res.json();
                         let getId = userBook.booksIds.indexOf(id);
                         userBook.status[getId] = "Requested";
                         userBook.requested += 1;
-                        await fetch(`http://localhost:5050/bookInventory/${userBook.id}`, {
+                        await fetch(`http://localhost:5000/bookInventory/${userBook.id}`, {
                             method: "PATCH",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify(userBook)
@@ -186,7 +186,7 @@ const BookInfo = () => {
                         let getDate = new Date();
                         jsonData.messageTime = getDate.toISOString();
                         jsonData.bookId = id;
-                        await fetch(`http://localhost:5050/notification`, {
+                        await fetch(`http://localhost:5000/notification`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify(jsonData)
@@ -216,7 +216,7 @@ const BookInfo = () => {
                         try {
                             let bookISBN = book.identifier
                             let bookName = book.title
-                            await fetch(`http://localhost:5050/libraryData/${id}`, {
+                            await fetch(`http://localhost:5000/libraryData/${id}`, {
                                 method: "DELETE"
                             })
                             alert("Book deleted!")

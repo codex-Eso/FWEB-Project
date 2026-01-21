@@ -12,7 +12,7 @@ const Recommended = () => {
         const booksDisplay = async () => {
             getLoading(true);
             try {
-                const res = await fetch(`http://localhost:5050/recommended/${localStorage.getItem("userId")}`);
+                const res = await fetch(`http://localhost:5000/recommended/${localStorage.getItem("userId")}`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
                 setBooks(data.titles);

@@ -39,7 +39,7 @@ const Inventory = () => {
     useEffect(() => {
         const bookInventory = async () => {
             try {
-                const res = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
+                const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
                 getBooks(data);
@@ -49,7 +49,7 @@ const Inventory = () => {
         }
         const libraryBooks = async () => {
             try {
-                const res = await fetch(`http://localhost:5050/libraryData`);
+                const res = await fetch(`http://localhost:5000/libraryData`);
                 if (!res.ok) throw new Error("Failed to get books! Try again later!");
                 let data = await res.json();
                 getAllBooks(data);
@@ -65,14 +65,14 @@ const Inventory = () => {
         document.getElementById(state).style.color = "#E53935";
     }, [state, books])
     const cancelRequest = async (id, title) => {
-        const res = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
+        const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}`);
         if (!res.ok) throw new Error("Failed to get books! Try again later!");
         let userBook = await res.json();
         let getId = userBook.booksIds.indexOf(id);
         userBook.status[getId] = "Cancelled";
         userBook.requested -= 1;
         try {
-            await fetch(`http://localhost:5050/bookInventory/${userBook.id}`, {
+            await fetch(`http://localhost:5000/bookInventory/${userBook.id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(userBook)
@@ -83,21 +83,21 @@ const Inventory = () => {
             let getDate = new Date();
             jsonData.messageTime = getDate.toISOString();
             jsonData.bookId = id;
-            await fetch(`http://localhost:5050/notification`, {
+            await fetch(`http://localhost:5000/notification`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(jsonData)
             });
             alert("Request cancelled!");
             getBooks(userBook);
-            let bookInfo = await fetch(`http://localhost:5050/libraryData/${id}`)
+            let bookInfo = await fetch(`http://localhost:5000/libraryData/${id}`)
             bookInfo = await bookInfo.json();
             addAdminLog("cancelled", bookInfo.identifier, bookInfo.title, localStorage.getItem("userId"));
-            let adminNoti = await fetch(`http://localhost:5050/adminLogs`);
+            let adminNoti = await fetch(`http://localhost:5000/adminLogs`);
             adminNoti = await adminNoti.json();
             //fix the bug where it deletes the wrong audit log, now it is fixed to delete the previously requested book by the user
             adminNoti = adminNoti.reverse().find(n => n.userId == localStorage.getItem("userId") && n.actionName == "requested" && n.bookISBN == bookInfo.identifier);
-            await fetch(`http://localhost:5050/adminLogs/${adminNoti.id}`, {
+            await fetch(`http://localhost:5000/adminLogs/${adminNoti.id}`, {
                 method: "DELETE"
             })
         } catch (e) {
@@ -107,13 +107,13 @@ const Inventory = () => {
     const renew = async (id, title) => {
         try {
             //due to complexity, I will not be adding the logic for letting 1 renew per book only            
-            let userBook = await fetch(`http://localhost:5050/bookInventory/${localStorage.getItem("userId")}`);
+            let userBook = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}`);
             userBook = await userBook.json();
             let i = userBook.booksIds.indexOf(id);
             let getDate = new Date(userBook.dueDate[i]);
             getDate.setDate(getDate.getDate() + 3);
             userBook.dueDate[i] = getDate;
-            await fetch(`http://localhost:5050/bookInventory/${userBook.id}`, {
+            await fetch(`http://localhost:5000/bookInventory/${userBook.id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(userBook)
@@ -125,7 +125,7 @@ const Inventory = () => {
             let getTdyDate = new Date();
             jsonData.messageTime = getTdyDate.toISOString();
             jsonData.bookId = id;
-            await fetch(`http://localhost:5050/notification`, {
+            await fetch(`http://localhost:5000/notification`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(jsonData)

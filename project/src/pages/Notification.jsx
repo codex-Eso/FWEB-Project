@@ -26,7 +26,7 @@ const Notification = () => {
     useEffect(() => {
         const notifications = async () => {
             try {
-                const res = await fetch(`http://localhost:5050/notification`);
+                const res = await fetch(`http://localhost:5000/notification`);
                 if (!res.ok) throw new Error("Failed to get notifications! Try again later!");
                 let data = await res.json();
                 data = data.notification || data;

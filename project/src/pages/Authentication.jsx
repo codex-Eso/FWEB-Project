@@ -13,7 +13,7 @@ const Authentication = () => {
     useEffect(() => {
         const checkLogin = async () => {
             try {
-                const res = await fetch("http://localhost:5050/users");
+                const res = await fetch("http://localhost:5000/users");
                 if (!res.ok) throw new Error("Failed to get users! Try again later!");
                 const data = await res.json();
                 setUser(data);

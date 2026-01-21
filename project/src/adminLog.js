@@ -9,7 +9,7 @@ export const addAdminLog = async (action, isbn, title, userId = null) => {
     if (userId !== null) {
         jsonObject.userId = userId;
     }
-    await fetch(`http://localhost:5050/adminLogs`, {
+    await fetch(`http://localhost:5000/adminLogs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(jsonObject)
