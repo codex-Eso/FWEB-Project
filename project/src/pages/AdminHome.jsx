@@ -38,13 +38,11 @@ const AdminHome = () => {
     const navToBook = (id) => {
         navigate(`book/${id}`);
     }
-    var booksDisplay = 0;
-    console.log(books)
+    let fetchedBooks = false;
     const viewedBooks = books.map((b) => {
-        if (booksDisplay === 3) return null;
         const matchedBooks = allBooks.find(book => book.id === b.bookId);
         if (!matchedBooks) return null;
-        booksDisplay++;
+        fetchedBooks = true;
         return (
             <div id="bookInfo" onClick={() => navToBook(matchedBooks.id)} className="ViewedBox" key={b.bookId}>
                 <img src={matchedBooks.bookImage} />
@@ -102,7 +100,7 @@ const AdminHome = () => {
             </div>
                 <br />
                 {
-                    booksDisplay !== 0 ? <><div className="d-flex align-items-center mb-2">
+                    fetchedBooks ? <><div className="d-flex align-items-center mb-2">
                         <h4>Recently Viewed:</h4>
                     </div>
                         <Stack className="viewBooks" direction="horizontal">

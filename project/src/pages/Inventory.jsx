@@ -95,8 +95,6 @@ const Inventory = () => {
             let jsonData = new Object();
             jsonData.studentId = localStorage.getItem("userId");
             jsonData.message = `Dear Student, the library book, ${title}, has been successfully cancelled!`
-            let getDate = new Date();
-            jsonData.messageTime = getDate.toISOString();
             jsonData.bookId = id;
             await fetch(`http://localhost:5000/notification`, {
                 method: "POST",
@@ -136,8 +134,6 @@ const Inventory = () => {
             let jsonData = new Object();
             jsonData.studentId = localStorage.getItem("userId");
             jsonData.message = `Dear Student, the library book, ${title}, has been successfully renewed! Enjoy 3 more days with the book!`
-            let getTdyDate = new Date();
-            jsonData.messageTime = getTdyDate.toISOString();
             jsonData.bookId = id;
             await fetch(`http://localhost:5000/notification`, {
                 method: "POST",

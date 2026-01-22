@@ -26,11 +26,9 @@ const Notification = () => {
     useEffect(() => {
         const notifications = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/notification`);
+                const res = await fetch(`http://localhost:5000/notification/${localStorage.getItem("userId")}`);
                 if (!res.ok) throw new Error("Failed to get notifications! Try again later!");
                 let data = await res.json();
-                data = data.notification || data;
-                data = data.filter(u => u.studentId === localStorage.getItem("userId"));
                 getNotification(data);
             } catch (e) {
                 console.error(e);
@@ -50,7 +48,7 @@ const Notification = () => {
                     type="button"
                     key={n.id}
                 >
-                    <h5>{formatDueDate(n.messageTime)}</h5>
+                    <h5>{formatDueDate(n.createdAt)}</h5>
                     <span>{n.message}</span>
                 </div>
                 <div className="mb-3"></div>

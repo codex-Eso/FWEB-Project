@@ -35,7 +35,7 @@ const Authentication = () => {
                 return
             } else if (user.adminNo === u.username && user.password === u.password) {
                 localStorage.setItem("loginRole", "student");
-                localStorage.setItem("userId", u.id);
+                localStorage.setItem("userId", u._id);
                 navigate("/student");
                 loggedIn = true;
                 return

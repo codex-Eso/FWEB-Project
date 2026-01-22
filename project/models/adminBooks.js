@@ -1,8 +1,16 @@
 import mongoose from "mongoose";
 
 const AdminBookSchema = new mongoose.Schema({
-    id: String,
-    bookId: String
+    id: {
+        type: String,
+        required: true
+    },
+    bookId: {
+        type: String,
+        required: true
+    }
+}, {
+    timestamps: true
 })
 
 export default mongoose.model("AdminBooks", AdminBookSchema, "adminBooks")

@@ -21,7 +21,6 @@ const Others = () => {
                 let notification = new Object();
                 notification.studentId = localStorage.getItem("userId");
                 notification.message = `Dear Student, the library book, ${getBook.title}, is now officially overdued. Please return the book immediately back to the library to prevent more heavier overdue fees.`
-                notification.messageTime = (new Date()).toISOString();
                 notification.bookId = bookId;
                 await fetch(`http://localhost:5000/notification`, {
                     method: "POST",
@@ -91,7 +90,6 @@ const Others = () => {
                 let notification = new Object();
                 notification.studentId = localStorage.getItem("userId");
                 notification.message = `Dear Student, the library book, ${getBook.title}, has now been returned!`
-                notification.messageTime = (new Date()).toISOString();
                 notification.bookId = bookId;
                 await fetch(`http://localhost:5000/notification`, {
                     method: "POST",

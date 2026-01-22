@@ -27,10 +27,9 @@ const NavStudent = () => {
         const notifications = async () => {
             let data;
             try {
-                const res = await fetch(`http://localhost:5000/notification`);
+                const res = await fetch(`http://localhost:5000/notification/${localStorage.getItem("userId")}`);
                 if (!res.ok) throw new Error("Failed to get notifications! Try again later!");
                 data = await res.json();
-                data = data.filter(u => u.studentId === localStorage.getItem("userId"));
                 getNotification(data);
             } catch (e) {
                 console.error(e);
@@ -46,7 +45,7 @@ const NavStudent = () => {
         return (
             <>
                 <div onClick={() => { navToBook(n.bookId); checkToShow(false) }} className='noti' type="button" key={n.id}>
-                    <span>{formatDueDate(n.messageTime)}</span>
+                    <span>{formatDueDate(n.createdAt)}</span>
                     <br></br>
                     <span className='notiMsg'>{n.message}</span>
                 </div>

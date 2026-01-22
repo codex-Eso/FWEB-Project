@@ -46,11 +46,19 @@ const BookInfo = () => {
                 if (getRole() === "admin") {
                     let adminBooks = new Object();
                     adminBooks.bookId = id
-                    await fetch(`http://localhost:5000/adminBooks`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(adminBooks)
-                    });
+                    let checkBook = await fetch(`http://localhost:5000/adminBooks/${id}`);
+                    checkBook = await checkBook.json();
+                    if (checkBook.message == "Book Exists!") {
+                        await fetch(`http://localhost:5000/adminBooks/${id}`, {
+                            method: "PATCH"
+                        });
+                    } else {
+                        await fetch(`http://localhost:5000/adminBooks`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(adminBooks)
+                        });
+                    }
                 } else if (getRole() === "student") {
                     //get the latest position of the book
                     const pos = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}`)
@@ -162,8 +170,6 @@ const BookInfo = () => {
                             let jsonData = new Object();
                             jsonData.studentId = localStorage.getItem("userId");
                             jsonData.message = `Dear Student, the library book, ${book.title}, has been successfully borrowed! Make sure to return the book back to the library after 4 weeks!`
-                            let getDate = new Date();
-                            jsonData.messageTime = getDate.toISOString();
                             jsonData.bookId = id;
                             await fetch(`http://localhost:5000/notification`, {
                                 method: "POST",
@@ -202,8 +208,6 @@ const BookInfo = () => {
                         let jsonData = new Object();
                         jsonData.studentId = localStorage.getItem("userId");
                         jsonData.message = `Dear Student, the library book, ${book.title}, has been successfully requested! Waiting might take a longer than a week if all available copies are taken.`
-                        let getDate = new Date();
-                        jsonData.messageTime = getDate.toISOString();
                         jsonData.bookId = id;
                         await fetch(`http://localhost:5000/notification`, {
                             method: "POST",
