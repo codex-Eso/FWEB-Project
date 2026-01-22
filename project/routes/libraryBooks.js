@@ -8,7 +8,13 @@ const upload = multer({ storage });
 
 router.get("/", async (req, res) => {
     try {
-        const library = await LibraryBooks.find();
+        const { isbn } = req.query;
+        let library;
+        if (isbn !== undefined) {
+            library = await LibraryBooks.findOne({ identifier: isbn });
+        } else {
+            library = await LibraryBooks.find();
+        }
         return res.status(200).json(library);
     } catch (error) {
         console.error(error);

@@ -67,11 +67,12 @@ const Others = () => {
                 const getUser = await fetch(`http://localhost:5000/users/${localStorage.getItem("userId")}`)
                 if (!getUser.ok) throw new Error("Failed to get users! Try again later!");
                 let user = await getUser.json();
-                user.borrowed = user.borrowed - 1;
-                await fetch(`http://localhost:5000/users/${localStorage.getItem("userId")}`, {
+                let studentUser = { ...user }
+                studentUser.borrowed = user.borrowed - 1;
+                await fetch(`http://localhost:5000/users/${user._id}`, {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(user)
+                    body: JSON.stringify(studentUser)
                 });
                 alert("Returned scenario triggered!");
                 let getBook = await fetch(`http://localhost:5000/libraryBooks/${bookId}`);

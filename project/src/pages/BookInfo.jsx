@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useParams } from "react-router"
 import Stack from "react-bootstrap/esm/Stack";
 import Close from "../assets/Close.png";
@@ -16,31 +16,31 @@ const BookInfo = () => {
     const [borrowedCount, setBorrowedCount] = useState(0);
     const [requestedCount, setRequestedCount] = useState(0);
     const navigate = useNavigate();
-    useEffect(() => { overflow(false) }, []);
-    useEffect(() => { }, [id]);
+    const hasFetched = useRef(false);
     useEffect(() => {
+        if (hasFetched.current) return;
+        hasFetched.current = true;
+        overflow(false);
         const userData = async () => {
             const getUser = await fetch(`http://localhost:5000/users/${localStorage.getItem("userId")}`)
             if (!getUser.ok) throw new Error("Failed to get users! Try again later!");
             let user = await getUser.json();
             setUser(user);
+            return user;
         }
         userData();
-    }, [])
-    useEffect(() => {
         const getBookInfo = async () => {
             try {
                 const res = await fetch(`http://localhost:5000/libraryBooks/${id}`);
                 if (!res.ok) throw new Error("Failed to get book! Try again later!");
                 let data = await res.json();
                 actualBook(data);
+                return data;
             } catch (e) {
                 navigate("error");
             }
         }
         getBookInfo()
-    })
-    useEffect(() => {
         const getUserBooks = async () => {
             try {
                 if (getRole() === "admin") {
@@ -52,16 +52,19 @@ const BookInfo = () => {
                         body: JSON.stringify(adminBooks)
                     });
                 } else if (getRole() === "student") {
-                    if (!book || book.fiction === undefined) return;
                     //get the latest position of the book
                     const pos = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}`)
-                    const getPos = await pos.json();
+                    let getPos = await pos.json();
+                    if (getPos == null) {
+                        getPos = 0;
+                    }
                     const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}/${id}`);
                     if (!res.ok) throw new Error("Failed to get books! Try again later!");
                     let data = await res.json();
-                    data.position = parseInt(getPos) + 1;
-                    let userUpdate = actualUser;
+                    let getUser = await userData();
+                    let userUpdate = { ...getUser };
                     if (data !== null) {
+                        data.position = parseInt(getPos) + 1;
                         await fetch(`http://localhost:5000/bookInventory/${data._id}`, {
                             method: "PATCH",
                             headers: { "Content-Type": "application/json" },
@@ -70,32 +73,24 @@ const BookInfo = () => {
                         setBookState(data.status);
                     } else {
                         setBookState('Viewed');
-                        let book = new Object();
-                        book.studentId = localStorage.getItem("userId");
-                        book.bookId = id;
-                        book.status = 'Viewed';
-                        book.dueDate = "";
-                        book.position = parseInt(getPos) + 1;
+                        let userBook = new Object();
+                        userBook.studentId = localStorage.getItem("userId");
+                        userBook.bookId = id;
+                        userBook.status = 'Viewed';
+                        userBook.dueDate = "";
+                        userBook.position = parseInt(getPos) + 1;
                         await fetch(`http://localhost:5000/bookInventory`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(data)
+                            body: JSON.stringify(userBook)
                         });
-                        if (book.fiction == true) {
-                            userUpdate.fictionCount += 1;
+                        const bookData = await getBookInfo();
+                        if (bookData.fiction == true) {
+                            userUpdate.fictionCount = getUser.fictionCount + 1;
                         } else {
-                            userUpdate.nonFictionCount += 1;
+                            userUpdate.nonFictionCount = getUser.nonFictionCount + 1;
                         }
-                        if (book.level == 0) {
-                            userUpdate.closedStacks += 1;
-                        } else if (book.level == 6) {
-                            userUpdate.level6 += 1;
-                        } else if (book.level == 7) {
-                            userUpdate.level7 += 1;
-                        } else if (book.level == 8) {
-                            userUpdate.level8 += 1;
-                        }
-                        await fetch(`http://localhost:5000/users/${localStorage.getItem("userId")}`, {
+                        await fetch(`http://localhost:5000/users/${userUpdate._id}`, {
                             method: "PATCH",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify(userUpdate)
@@ -109,7 +104,7 @@ const BookInfo = () => {
             }
         }
         getUserBooks();
-    })
+    }, [])
     const action = (getAction) => {
         if (getRole() === "student") {
             if (book.location === "Closed Stacks" && getAction === "Borrow") {
@@ -144,9 +139,9 @@ const BookInfo = () => {
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify(userBook)
                             });
-                            let userUpdate = actualUser
+                            let userUpdate = { ...actualUser }
                             userUpdate.borrowed = actualUser.borrowed + 1;
-                            await fetch(`http://localhost:5000/users/${localStorage.getItem("userId")}`, {
+                            await fetch(`http://localhost:5000/users/${userUpdate._id}`, {
                                 method: "PATCH",
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify(userUpdate)
@@ -197,9 +192,9 @@ const BookInfo = () => {
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify(userBook)
                         });
-                        let userUpdate = actualUser
+                        let userUpdate = { ...actualUser }
                         userUpdate.requested = actualUser.requested + 1;
-                        await fetch(`http://localhost:5000/users/${localStorage.getItem("userId")}`, {
+                        await fetch(`http://localhost:5000/users/${userUpdate._id}`, {
                             method: "PATCH",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify(userUpdate)

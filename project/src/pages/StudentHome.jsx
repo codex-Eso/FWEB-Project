@@ -5,9 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { overflow } from "../overflow"
 import NoBooks from "../components/NoBooks";
 const StudentHome = () => {
-    const [books, setBooks] = useState({})
+    const [books, setBooks] = useState([])
     const [allBooks, getBooks] = useState([])
-    const [noOfBooks, getNumBooks] = useState(0)
     const [searchQuery, setSearchQuery] = useState("");
     const [bookResults, getBookResults] = useState([]);
     const navigate = useNavigate()
@@ -36,22 +35,16 @@ const StudentHome = () => {
         getViewedBooks();
         getAllBooks();
     }, []);
-    useEffect(() => {
-        if (!books.booksIds) return;
-        const bookCount = books.booksIds.length;
-        getNumBooks(bookCount);
-    })
     const navToBook = (id) => {
         navigate(`book/${id}`);
     }
-    var booksDisplay = 0;
-    const viewedBooks = books.booksIds?.map((id) => {
-        if (booksDisplay === 3) return null;
-        const matchedBooks = allBooks.find(book => book.id === id);
+    let fetchedBooks = false;
+    const viewedBooks = books.map((viewBook) => {
+        const matchedBooks = allBooks.find(book => book.id === viewBook.bookId);
         if (!matchedBooks) return null;
-        booksDisplay++;
+        fetchedBooks = true;
         return (
-            <div id="bookInfo" onClick={() => navToBook(matchedBooks.id)} className="ViewedBox" key={id}>
+            <div id="bookInfo" onClick={() => navToBook(matchedBooks.id)} className="ViewedBox" key={viewBook._id}>
                 <img src={matchedBooks.bookImage} />
                 <div className="d-flex flex-column text-start fs-5 ps-3 viewBookText">
                     <text>{matchedBooks.title}</text>
@@ -107,9 +100,9 @@ const StudentHome = () => {
             </div>
                 <br />
                 {
-                    booksDisplay !== 0 ? <><div className="d-flex align-items-center mb-2">
+                    fetchedBooks ? <><div className="d-flex align-items-center mb-2">
                         <h4>Recently Viewed:</h4>
-                        {noOfBooks > 3 && <h4 onClick={() => { navigate("inventory") }} className="text-decoration-underline ms-auto viewAll">View All</h4>}
+                        <h4 onClick={() => { navigate("inventory") }} className="text-decoration-underline ms-auto viewAll">View All</h4>
                     </div>
                         <Stack className="viewBooks" direction="horizontal">
                             {!viewedBooks && <div className="d-flex justify-content-center align-items-center w-100 mt-3 gap-3" direction="horizontal"><div className="spinner-grow"></div><div className="spinner-grow"></div><div className="spinner-grow"></div></div>}

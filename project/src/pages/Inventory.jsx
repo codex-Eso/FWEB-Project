@@ -29,7 +29,7 @@ const Inventory = () => {
     useEffect(() => { overflow(true) }, []);
     const [actualUser, setUser] = useState({});
     const [state, setState] = useState("All");
-    const [books, getBooks] = useState({});
+    const [books, getBooks] = useState([]);
     const [allBooks, getAllBooks] = useState([]);
     const [availableCheck, setAvailableCheck] = useState(false);
     const [unavailableCheck, setUnavailableCheck] = useState(false);
@@ -85,9 +85,9 @@ const Inventory = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(userBook)
             });
-            let userUpdate = actualUser
+            let userUpdate = { ...actualUser }
             userUpdate.requested = actualUser.requested - 1;
-            await fetch(`http://localhost:5000/users/${localStorage.getItem("userId")}`, {
+            await fetch(`http://localhost:5000/users/${actualUser._id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(userUpdate)
@@ -112,7 +112,7 @@ const Inventory = () => {
             adminNoti = await adminNoti.json();
             //fix the bug where it deletes the wrong audit log, now it is fixed to delete the previously requested book by the user
             adminNoti = adminNoti.reverse().find(n => n.userId == localStorage.getItem("userId") && n.actionName == "requested" && n.bookISBN == bookInfo.identifier);
-            await fetch(`http://localhost:5000/adminLogs/${adminNoti.id}`, {
+            await fetch(`http://localhost:5000/adminLogs/${adminNoti._id}`, {
                 method: "DELETE"
             })
         } catch (e) {
@@ -124,7 +124,7 @@ const Inventory = () => {
             //due to complexity, I will not be adding the logic for letting 1 renew per book only            
             let userBook = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}/${id}`);
             userBook = await userBook.json();
-            let getDate = new Date(userBook.dueDate[i]);
+            let getDate = new Date(userBook.dueDate);
             getDate.setDate(getDate.getDate() + 3);
             userBook.dueDate = getDate;
             await fetch(`http://localhost:5000/bookInventory/${userBook._id}`, {
@@ -148,53 +148,76 @@ const Inventory = () => {
             console.log(e)
         }
     }
-    displayBooks = books.booksIds?.map((id, idx) => ({
-        id,
-        status: books.status[idx],
-        dueDate: books.dueDate[idx]
-    }))
+    const bookMap = Object.fromEntries(allBooks.map(b => [b.id, b]));
+    displayBooks = books
+        .map(({ bookId, status, dueDate }) => ({
+            id: bookId,
+            status,
+            dueDate,
+            details: bookMap[bookId]
+        }))
         .filter(book => {
-            const matchedBook = allBooks.find(b => b.id === book.id);
-            if (!matchedBook) return false;
+            if (!book.details) return false;
             if (state !== "All" && book.status !== state) return false;
             if (availableCheck && unavailableCheck) return true;
-            if (availableCheck && !matchedBook.availability) return false;
-            if (unavailableCheck && matchedBook.availability) return false;
+            if (availableCheck && !book.details.availability) return false;
+            if (unavailableCheck && book.details.availability) return false;
             return true;
         })
         .map(book => {
-            const matchedBook = allBooks.find(b => b.id === book.id);
-            if (!matchedBook) return null;
+            const { details } = book;
             return (
                 <div
                     id="bookInfo"
-                    onClick={() => navToBook(matchedBook.id)}
+                    onClick={() => navToBook(details.id)}
                     className="ViewedBox"
                     key={book.id}
                     style={{ position: "relative" }}
                 >
-                    <img src={matchedBook.bookImage} />
+                    <img src={details.bookImage} />
                     <div className="d-flex flex-column text-start fs-6 ps-3 stats">
-                        {(book.status === "Requested") && (
-                            <img id="request" onClick={(e) => { e.stopPropagation(); cancelRequest(matchedBook.id, matchedBook.title) }} src={Close} width={40} height={40} style={{ objectFit: "contain" }} />
+                        {book.status === "Requested" && (
+                            <img
+                                id="request"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    cancelRequest(details.id, details.title);
+                                }}
+                                src={Close}
+                                width={40}
+                                height={40}
+                                style={{ objectFit: "contain" }}
+                            />
                         )}
-                        <span>{matchedBook.title}</span>
-                        <span>By {matchedBook.author}</span>
-                        {matchedBook.availability
-                            ? <span className="text-success">Available</span>
-                            : <span className="text-danger">Unavailable</span>}
+                        <span>{details.title}</span>
+                        <span>By {details.author}</span>
+                        {details.availability ? (
+                            <span className="text-success">Available</span>
+                        ) : (
+                            <span className="text-danger">Unavailable</span>
+                        )}
                         <span>Status: {book.status}</span>
-                        {(book.status === "Borrowed") && (
+                        {book.status === "Borrowed" && (
                             <>
                                 <span>Return By: {formatDueDate(book.dueDate)}</span>
-                                <button onClick={(e) => { renew(book.id, matchedBook.title); e.stopPropagation(); }} className="mt-1">Renew</button>
+                                <button
+                                    onClick={(e) => {
+                                        renew(book.id, details.title);
+                                        e.stopPropagation();
+                                    }}
+                                    className="mt-1"
+                                >
+                                    Renew
+                                </button>
                             </>
                         )}
-                        {(book.status === "Collecting") && (
+                        {book.status === "Collecting" && (
                             <span>Collect By: {formatDueDate(book.dueDate)}</span>
                         )}
-                        {(book.status === "Overdue") && (
-                            <span className="text-danger">Return By: {formatDueDate(book.dueDate)}</span>
+                        {book.status === "Overdue" && (
+                            <span className="text-danger">
+                                Return By: {formatDueDate(book.dueDate)}
+                            </span>
                         )}
                     </div>
                 </div>

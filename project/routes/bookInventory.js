@@ -8,9 +8,16 @@ router.get("/", async (req, res) => {
         const { studentId, viewStatus } = req.query;
         let getBooks;
         if (viewStatus != undefined) {
-            getBooks = await BookInventory.find({ studentId: studentId, status: viewStatus });
+            getBooks = await BookInventory.aggregate([
+                { $match: { studentId: studentId } },
+                { $sort: { position: -1 } },
+                { $limit: 3 }
+            ]);
         } else {
-            getBooks = await BookInventory.find({ studentId: studentId });
+            getBooks = await BookInventory.aggregate([
+                { $match: { studentId: studentId } },
+                { $sort: { position: -1 } }
+            ]);
         }
         return res.status(200).json(getBooks);
     } catch (error) {
@@ -57,19 +64,24 @@ router.patch("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
     try {
-        const { studentId, bookId, status, dueDate, position } = req.body;
-        if (!studentId || !bookId || !status || !dueDate || !position) {
-            throw new Error('Cannot proceed! There are empty input values!');
+        const bookInventory = await BookInventory.findOne({ studentId: req.body.studentId, bookId: req.body.bookId });
+        if (bookInventory === null) {
+            const { studentId, bookId, status, dueDate, position } = req.body;
+            if (studentId === null || bookId === null || status === null || dueDate === null || position === null) {
+                throw new Error('Cannot proceed! There are empty input values!');
+            } else {
+                const newUserBook = new BookInventory({
+                    studentId,
+                    bookId,
+                    status,
+                    dueDate,
+                    position
+                })
+                await newUserBook.save();
+                return res.status(200).json({ message: "Added" });
+            }
         } else {
-            const newUserBook = new BookInventory({
-                studentId,
-                bookId,
-                status,
-                dueDate,
-                position
-            })
-            await newUserBook.save();
-            return res.status(200).json({ message: "Added" });
+            return res.json(null);
         }
     } catch (error) {
         console.error(error);

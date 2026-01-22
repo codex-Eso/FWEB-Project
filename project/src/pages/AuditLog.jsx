@@ -91,11 +91,9 @@ const AuditLog = () => {
             notification.studentId = uId;
             notification.message = `Dear Student, the library book, ${title}, is now ready for collection! Please collect the book within 3 days.`
             notification.messageTime = (new Date()).toISOString();
-            let books = await fetch("http://localhost:5000/libraryBooks");
+            let books = await fetch(`http://localhost:5000/libraryBooks?isbn=${isbn}`);
             books = await books.json();
-            //ask Colin
-            books = books.filter((b) => b.identifier == isbn);
-            const bookId = books[0].id
+            const bookId = books.id
             notification.bookId = bookId
             await fetch(`http://localhost:5000/notification`, {
                 method: "POST",
@@ -110,14 +108,16 @@ const AuditLog = () => {
             dueDate.setDate(tdyDate.getDate() + 3);
             dueDate = dueDate.toISOString();
             updatedBook.dueDate = dueDate;
-            await fetch(`http://localhost:5000/bookInventory/${updatedBook.id}`, {
+            await fetch(`http://localhost:5000/bookInventory/${updatedBook._id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updatedBook)
             });
-            let getUser = new Object();
-            getUser.requested -= 1;
-            await fetch(`http://localhost:5000/users/${uId}`, {
+            let user = await fetch(`http://localhost:5000/users/${uId}`)
+            user = await user.json();
+            let getUser = { ...user };
+            getUser.requested = user.requested - 1;
+            await fetch(`http://localhost:5000/users/${getUser._id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(getUser)
@@ -140,11 +140,9 @@ const AuditLog = () => {
             notification.studentId = uId;
             notification.message = `Dear Student, the library book, ${title}, has been rejected for collection by the admin.`
             notification.messageTime = (new Date()).toISOString();
-            let books = await fetch("http://localhost:5000/libraryBooks");
+            let books = await fetch(`http://localhost:5000/libraryBooks?isbn=${isbn}`);
             books = await books.json();
-            //ask Colin
-            books = books.filter((b) => b.identifier == isbn);
-            const bookId = books[0].id
+            const bookId = books.id
             notification.bookId = bookId
             await fetch(`http://localhost:5000/notification`, {
                 method: "POST",
@@ -154,14 +152,16 @@ const AuditLog = () => {
             let updatedBook = await fetch(`http://localhost:5000/bookInventory/${uId}/${bookId}`);
             updatedBook = await updatedBook.json();
             updatedBook.status = "Cancelled";
-            await fetch(`http://localhost:5000/bookInventory/${updatedBook.id}`, {
+            await fetch(`http://localhost:5000/bookInventory/${updatedBook._id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updatedBook)
             });
-            let getUser = new Object();
-            getUser.requested -= 1;
-            await fetch(`http://localhost:5000/users/${uId}`, {
+            let user = await fetch(`http://localhost:5000/users/${uId}`)
+            user = await user.json();
+            let getUser = { ...user };
+            getUser.requested = user.requested - 1;
+            await fetch(`http://localhost:5000/users/${getUser._id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(getUser)

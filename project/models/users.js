@@ -12,10 +12,7 @@ const userSchema = new mongoose.Schema({
     requested: Number,
     nonFictionCount: Number,
     fictionCount: Number,
-    closedStacks: Number,
-    level6: Number,
-    level7: Number,
-    level8: Number
+    closedStacks: Number
 }, { strict: false })
 
 export default mongoose.model("Users", userSchema, "users")
