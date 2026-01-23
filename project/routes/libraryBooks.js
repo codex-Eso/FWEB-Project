@@ -30,7 +30,7 @@ router.get("/:id", async (req, res) => {
     try {
         const library = await LibraryBooks.findOne({ id: req.params.id });
         if (library == null || !library) {
-            return res.status(404).json({ error: "Book cannot found!" })
+            return res.status(404).json({ error: "Book cannot be found!" })
         }
         return res.status(200).json(library);
     } catch (error) {
@@ -82,7 +82,7 @@ router.delete("/:id", async (req, res) => {
     try {
         const library = await LibraryBooks.findOne({ _id: id });
         if (library == null || !library) {
-            return res.status(404).json({ error: "Book cannot found!" })
+            return res.status(404).json({ error: "Book cannot be found!" })
         }
         await LibraryBooks.findOneAndDelete({ _id: id });
         return res.status(200).json({ message: "Deleted" });

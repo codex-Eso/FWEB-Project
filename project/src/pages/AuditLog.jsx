@@ -126,7 +126,7 @@ const AuditLog = () => {
             adminNoti = await adminNoti.json();
             //ask Colin
             adminNoti = adminNoti.slice().reverse().find((n) => n.id == logId);
-            await fetch(`http://localhost:5000/adminLogs/${adminNoti.id}`, {
+            await fetch(`http://localhost:5000/adminLogs/${adminNoti._id}`, {
                 method: "DELETE"
             })
         } catch (e) {
@@ -168,8 +168,7 @@ const AuditLog = () => {
             let adminNoti = await fetch(`http://localhost:5000/adminLogs`);
             adminNoti = await adminNoti.json();
             //ask Colin
-            adminNoti = adminNoti.slice().reverse().find(n => n.id == logId);
-            await fetch(`http://localhost:5000/adminLogs/${adminNoti.id}`, {
+            await fetch(`http://localhost:5000/adminLogs/${adminNoti._id}`, {
                 method: "DELETE"
             })
         } catch (e) {

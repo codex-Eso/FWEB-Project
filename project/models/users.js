@@ -11,8 +11,7 @@ const userSchema = new mongoose.Schema({
     borrowed: Number,
     requested: Number,
     nonFictionCount: Number,
-    fictionCount: Number,
-    closedStacks: Number
+    fictionCount: Number
 }, { strict: false })
 
 export default mongoose.model("Users", userSchema, "users")
