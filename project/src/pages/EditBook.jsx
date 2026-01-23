@@ -86,7 +86,7 @@ const EditBook = () => {
                 formData.append("imgLocation", bookLocImg);
             }
             formData.append("level", level);
-            await fetch(`http://localhost:5000/libraryBooks/${id}`, {
+            await fetch(`http://localhost:5000/libraryBooks/${book._id}`, {
                 method: "PATCH",
                 body: formData
             });

@@ -39,9 +39,6 @@ const AddBook = () => {
             if (!title.trim() || !author.trim() || !publisher.trim() || !location.trim() || !bookImage || !isbn || copies === "" || availability === "" || level === "" || fiction === "") {
                 alert("Cannot proceed! There are empty input values!");
                 return;
-            } else if (!bookLoc && location !== "Closed Stacks") {
-                alert("Cannot proceed! There are empty input values!");
-                return;
             } else if (copies < 0 || isbn < 0) {
                 alert("Cannot proceed! ISBN & Copies must be appropriate numeric values!");
                 return;
@@ -53,6 +50,9 @@ const AddBook = () => {
                 return;
             } else if (location !== "Closed Stacks" && level == 0) {
                 alert("Cannot proceed! Location & Level must match appropriately!");
+                return;
+            } else if (!bookLoc && location !== "Closed Stacks") {
+                alert("Cannot proceed! There are empty input values!");
                 return;
             }
             let id;

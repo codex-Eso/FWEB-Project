@@ -15,7 +15,7 @@ router.get("/:studentId", async (req, res) => {
         if (user === null) {
             return res.status(404).json({ error: "User cannot be found!" })
         }
-        const notification = await Notification.find({ studentId: studentId }).sort({ createdAt: -1 });
+        const notification = await Notification.find({ studentId: studentId }).sort({ createdAt: 1 });
         return res.status(200).json(notification);
     } catch (error) {
         console.error(error);

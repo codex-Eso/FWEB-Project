@@ -83,7 +83,7 @@ const Others = () => {
                 }
                 getBook.copies += 1;
                 formData.append('copies', getBook.copies)
-                await fetch(`http://localhost:5000/libraryBooks/${bookId}`, {
+                await fetch(`http://localhost:5000/libraryBooks/${getBook._id}`, {
                     method: "PATCH",
                     body: formData
                 });

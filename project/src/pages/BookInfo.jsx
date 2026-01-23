@@ -162,7 +162,7 @@ const BookInfo = () => {
                                 updatedBook.availability = false;
                                 formData.append('availability', updatedBook.availability);
                             }
-                            await fetch(`http://localhost:5000/libraryBooks/${id}`, {
+                            await fetch(`http://localhost:5000/libraryBooks/${book._id}`, {
                                 method: "PATCH",
                                 body: formData
                             });
@@ -239,7 +239,7 @@ const BookInfo = () => {
                         try {
                             let bookISBN = book.identifier
                             let bookName = book.title
-                            await fetch(`http://localhost:5000/libraryBooks/${id}`, {
+                            await fetch(`http://localhost:5000/libraryBooks/${book._id}`, {
                                 method: "DELETE"
                             })
                             alert("Book deleted!")
