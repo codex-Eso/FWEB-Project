@@ -7,13 +7,16 @@ const Recommended = () => {
     const navigate = useNavigate();
     const [books, setBooks] = useState([]);
     const [loading, getLoading] = useState(false);
-    useEffect(() => { overflow(true) }, []);
     useEffect(() => {
+        overflow(true)
         const booksDisplay = async () => {
             getLoading(true);
             try {
                 const res = await fetch(`http://localhost:5000/recommended/${localStorage.getItem("userId")}`);
-                if (!res.ok) throw new Error("Failed to get books! Try again later!");
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || "Failed to get books! Try again later!");
+                }
                 let data = await res.json();
                 setBooks(data.titles);
             } catch (e) {

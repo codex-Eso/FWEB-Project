@@ -23,7 +23,10 @@ const BookInfo = () => {
         overflow(false);
         const userData = async () => {
             const getUser = await fetch(`http://localhost:5000/users/${localStorage.getItem("userId")}`)
-            if (!getUser.ok) throw new Error("Failed to get users! Try again later!");
+            if (!getUser.ok) {
+                const errorData = await getUser.json();
+                throw new Error(errorData.error || "Failed to get users! Try again later!");
+            }
             let user = await getUser.json();
             setUser(user);
             return user;
@@ -32,7 +35,10 @@ const BookInfo = () => {
         const getBookInfo = async () => {
             try {
                 const res = await fetch(`http://localhost:5000/libraryBooks/${id}`);
-                if (!res.ok) throw new Error("Failed to get book! Try again later!");
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || "Failed to get book! Try again later!");
+                }
                 let data = await res.json();
                 actualBook(data);
                 return data;
@@ -67,7 +73,10 @@ const BookInfo = () => {
                         getPos = 0;
                     }
                     const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}/${id}`);
-                    if (!res.ok) throw new Error("Failed to get books! Try again later!");
+                    if (!res.ok) {
+                        const errorData = await res.json();
+                        throw new Error(errorData.error || "Failed to get books! Try again later!");
+                    }
                     let data = await res.json();
                     let getUser = await userData();
                     let userUpdate = { ...getUser };
@@ -138,7 +147,10 @@ const BookInfo = () => {
                             dueDate.setDate(tdyDate.getDate() + 28);
                             dueDate = dueDate.toISOString();
                             const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}/${id}`);
-                            if (!res.ok) throw new Error("Failed to get books! Try again later!");
+                            if (!res.ok) {
+                                const errorData = await res.json();
+                                throw new Error(errorData.error || "Failed to get books! Try again later!");
+                            }
                             let userBook = await res.json();
                             userBook.status = "Borrowed";
                             userBook.dueDate = dueDate;
@@ -190,7 +202,10 @@ const BookInfo = () => {
                     }
                     const bookRequested = async () => {
                         const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}/${id}`);
-                        if (!res.ok) throw new Error("Failed to get books! Try again later!");
+                        if (!res.ok) {
+                            const errorData = await res.json();
+                            throw new Error(errorData.error || "Failed to get books! Try again later!");
+                        }
                         let userBook = await res.json();
                         userBook.status = "Requested";
                         await fetch(`http://localhost:5000/bookInventory/${userBook._id}`, {

@@ -10,12 +10,15 @@ const StudentHome = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [bookResults, getBookResults] = useState([]);
     const navigate = useNavigate()
-    useEffect(() => { overflow(false) }, []);
     useEffect(() => {
+        overflow(false);
         const getViewedBooks = async () => {
             try {
                 const res = await fetch(`http://localhost:5000/bookInventory?studentId=${localStorage.getItem("userId")}&viewStatus=Viewed`);
-                if (!res.ok) throw new Error("Failed to get books! Try again later!");
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || "Failed to get books! Try again later!");
+                }
                 let data = await res.json();
                 setBooks(data);
             } catch (e) {
@@ -25,7 +28,10 @@ const StudentHome = () => {
         const getAllBooks = async () => {
             try {
                 const res = await fetch(`http://localhost:5000/libraryBooks`);
-                if (!res.ok) throw new Error("Failed to get books! Try again later!");
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || "Failed to get books! Try again later!");
+                }
                 let data = await res.json();
                 getBooks(data);
             } catch (e) {

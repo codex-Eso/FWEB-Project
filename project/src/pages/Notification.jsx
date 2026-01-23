@@ -10,7 +10,6 @@ DUE TO TIME CONSTRAINT (OVERDUE/RETURNED IS NOW MAINLY FOR SHOWCASING ONLY WITH 
 
 const Notification = () => {
     const navigate = useNavigate();
-    useEffect(() => { overflow(true) }, []);
     const [notification, getNotification] = useState([]);
     const formatDueDate = (isoString) => {
         const date = new Date(isoString);
@@ -24,10 +23,14 @@ const Notification = () => {
         });
     };
     useEffect(() => {
+        overflow(true)
         const notifications = async () => {
             try {
                 const res = await fetch(`http://localhost:5000/notification/${localStorage.getItem("userId")}`);
-                if (!res.ok) throw new Error("Failed to get notifications! Try again later!");
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || "Failed to get notifications! Try again later!");
+                }
                 let data = await res.json();
                 getNotification(data);
             } catch (e) {

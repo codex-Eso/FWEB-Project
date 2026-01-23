@@ -14,7 +14,10 @@ const Authentication = () => {
         const checkLogin = async () => {
             try {
                 const res = await fetch("http://localhost:5000/users");
-                if (!res.ok) throw new Error("Failed to get users! Try again later!");
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || "Failed to get users! Try again later!");
+                }
                 const data = await res.json();
                 setUser(data);
             } catch (e) {

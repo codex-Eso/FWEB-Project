@@ -64,7 +64,10 @@ const Others = () => {
                     body: JSON.stringify(userBook)
                 })
                 const getUser = await fetch(`http://localhost:5000/users/${localStorage.getItem("userId")}`)
-                if (!getUser.ok) throw new Error("Failed to get users! Try again later!");
+                if (!getUser.ok) {
+                    const errorData = await getUser.json();
+                    throw new Error(errorData.error || "Failed to get users! Try again later!");
+                }
                 let user = await getUser.json();
                 let studentUser = { ...user }
                 studentUser.borrowed = user.borrowed - 1;

@@ -26,7 +26,6 @@ const formatDueDate = (isoString) => {
 };
 const Inventory = () => {
     const navigate = useNavigate();
-    useEffect(() => { overflow(true) }, []);
     const [actualUser, setUser] = useState({});
     const [state, setState] = useState("All");
     const [books, getBooks] = useState([]);
@@ -38,9 +37,13 @@ const Inventory = () => {
         navigate(`/student/book/${id}`);
     }
     useEffect(() => {
+        overflow(true)
         const userData = async () => {
             const getUser = await fetch(`http://localhost:5000/users/${localStorage.getItem("userId")}`)
-            if (!getUser.ok) throw new Error("Failed to get users! Try again later!");
+            if (!getUser.ok) {
+                const errorData = await getUser.json();
+                throw new Error(errorData.error || "Failed to get users! Try again later!");
+            }
             let user = await getUser.json();
             setUser(user);
         }
@@ -50,7 +53,10 @@ const Inventory = () => {
         const bookInventory = async () => {
             try {
                 const res = await fetch(`http://localhost:5000/bookInventory?studentId=${localStorage.getItem("userId")}`);
-                if (!res.ok) throw new Error("Failed to get books! Try again later!");
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || "Failed to get books! Try again later!");
+                }
                 let data = await res.json();
                 getBooks(data);
             } catch (e) {
@@ -60,7 +66,10 @@ const Inventory = () => {
         const libraryBooks = async () => {
             try {
                 const res = await fetch(`http://localhost:5000/libraryBooks`);
-                if (!res.ok) throw new Error("Failed to get books! Try again later!");
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || "Failed to get books! Try again later!");
+                }
                 let data = await res.json();
                 getAllBooks(data);
             } catch (e) {
@@ -76,7 +85,10 @@ const Inventory = () => {
     }, [state, books])
     const cancelRequest = async (id, title) => {
         const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}/${id}`);
-        if (!res.ok) throw new Error("Failed to get books! Try again later!");
+        if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || "Failed to get books! Try again later!");
+        }
         let userBook = await res.json();
         userBook.status = "Cancelled";
         try {

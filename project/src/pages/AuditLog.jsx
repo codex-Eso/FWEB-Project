@@ -25,7 +25,10 @@ const AuditLog = () => {
             if (state === "All") {
                 try {
                     const res = await fetch(`http://localhost:5000/adminLogs`)
-                    if (!res.ok) throw new Error("Failed to get admin logs! Try again later!");
+                    if (!res.ok) {
+                        const errorData = await res.json();
+                        throw new Error(errorData.error || "Failed to get admin logs! Try again later!");
+                    }
                     let data = await res.json();
                     getAllLogs(data);
                 } catch (e) {
@@ -33,22 +36,24 @@ const AuditLog = () => {
                 }
             } else if (state === "Unread") {
                 try {
-                    const res = await fetch(`http://localhost:5000/adminLogs`)
-                    if (!res.ok) throw new Error("Failed to get admin logs! Try again later!");
+                    const res = await fetch(`http://localhost:5000/adminLogs/${false}`)
+                    if (!res.ok) {
+                        const errorData = await res.json();
+                        throw new Error(errorData.error || "Failed to get admin logs! Try again later!");
+                    }
                     let data = await res.json();
-                    //ask Colin
-                    data = data.filter(log => log.readLog === false)
                     getAllLogs(data);
                 } catch (e) {
                     console.log(e)
                 }
             } else if (state == "Read") {
                 try {
-                    const res = await fetch(`http://localhost:5000/adminLogs`)
-                    if (!res.ok) throw new Error("Failed to get admin logs! Try again later!");
+                    const res = await fetch(`http://localhost:5000/adminLogs/${true}`)
+                    if (!res.ok) {
+                        const errorData = await res.json();
+                        throw new Error(errorData.error || "Failed to get admin logs! Try again later!");
+                    }
                     let data = await res.json();
-                    //ask Colin
-                    data = data.filter(log => log.readLog === true)
                     getAllLogs(data);
                 } catch (e) {
                     console.log(e)

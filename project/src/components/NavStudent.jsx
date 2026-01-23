@@ -28,7 +28,10 @@ const NavStudent = () => {
             let data;
             try {
                 const res = await fetch(`http://localhost:5000/notification/${localStorage.getItem("userId")}`);
-                if (!res.ok) throw new Error("Failed to get notifications! Try again later!");
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || "Failed to get notifications! Try again later!");
+                }
                 data = await res.json();
                 getNotification(data);
             } catch (e) {
@@ -36,7 +39,7 @@ const NavStudent = () => {
             }
         }
         notifications();
-    }, [])
+    }, [notification])
     const navToBook = (id) => {
         navigate(`/student/book/${id}`);
         document.getElementById("notification").style.textDecoration = "none";

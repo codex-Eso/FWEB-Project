@@ -23,6 +23,21 @@ router.get("/", async (req, res) => {
     }
 })
 
+router.get("/:readLog", async (req, res) => {
+    try {
+        const { readLog } = req.params
+        if (readLog != "true" && readLog != "false") {
+            return res.status(404).json({ error: "Admin logs cannot be found!" })
+        }
+        let bool = readLog === "true"
+        const getLogs = await AdminLogs.find({ readLog: bool })
+        return res.status(200).json(getLogs);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Server Error! Failed to fetch admin logs!" });
+    }
+})
+
 router.post("/", async (req, res) => {
     const { auditTime, bookISBN, bookName, actionName, readLog } = req.body
     if (!auditTime || !bookISBN || !bookName || !actionName || readLog == null) {

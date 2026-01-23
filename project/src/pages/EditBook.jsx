@@ -10,13 +10,15 @@ const EditBook = () => {
     const navigate = useNavigate();
     const [book, bookInfo] = useState({});
     const [loading, getLoading] = useState(false);
-    useEffect(() => { overflow(true) }, []);
-    useEffect(() => { }, [id]);
     useEffect(() => {
+        overflow(true)
         const getBookInfo = async () => {
             try {
                 const res = await fetch(`http://localhost:5000/libraryBooks/${id}`);
-                if (!res.ok) throw new Error("Failed to get book! Try again later!");
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || "Failed to get book! Try again later!");
+                }
                 let data = await res.json();
                 bookInfo(data);
             } catch (e) {
