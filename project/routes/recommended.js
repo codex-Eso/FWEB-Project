@@ -1,21 +1,27 @@
-//ask Colin if the simple AI recommendation ok or not (hopefully bruhh)
 import express from "express";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
 import LibraryBooks from "../models/libraryBooks.js";
-import BookInventory from "../models/bookInventory.js";
+import Users from "../models/users.js";
+import mongoose from "mongoose";
 dotenv.config();
 const router = express.Router();
 //use ai to recommend 3 books that are under the user preference of fiction/non-fiction (all the books must be available)
 router.get("/:userId", async (req, res) => {
     const { userId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ error: "Bad user id detected!" })
+    }
+    const user = await Users.findOne({ _id: userId });
+    if (user === null) {
+        return res.status(404).json({ error: "User is not found!" })
+    }
     try {
-        const userData = await BookInventory.findOne({ studentId: userId });
-        const fictionPref =
-            (userData?.fictionCount?.fiction >= userData?.fictionCount?.nonFiction) ? true : false;
         let books;
         let prompt;
-        if (userData.booksIds.length !== 0) {
+        if (user.fictionCount !== 0 || user.nonFictionCount !== 0) {
+            const fictionPref =
+                (user.fictionCount >= user.nonFictionCount) ? true : false;
             books = await LibraryBooks.find({
                 availability: true,
                 fiction: fictionPref,
@@ -72,10 +78,11 @@ ${bookList}
         }
         const aiResponse = data.choices?.[0]?.message?.content?.trim() || "No response from model.";
         let bookTitles = await LibraryBooks.find();
-        bookTitles = bookTitles.filter(b => aiResponse.includes(b.title));
+        bookTitles = bookTitles.filter(b => aiResponse.includes(b.title)).slice(0, 3);
         return res.json({ recommendations: aiResponse, titles: bookTitles });
     } catch (err) {
         console.error(err);
+        return res.status(500).json({ error: "Server Error! Failed to fetch recommendations!" });
     }
 });
 export default router;
