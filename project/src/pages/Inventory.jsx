@@ -101,7 +101,6 @@ const Inventory = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(jsonData)
             });
-            alert("Request cancelled!");
             getBooks(userBook);
             let bookInfo = await fetch(`http://localhost:5000/libraryBooks/${id}`)
             bookInfo = await bookInfo.json();
@@ -113,6 +112,8 @@ const Inventory = () => {
             await fetch(`http://localhost:5000/adminLogs/${adminNoti._id}`, {
                 method: "DELETE"
             })
+            alert("Request cancelled!");
+            location.reload(true);
         } catch (e) {
             console.log(e);
         }

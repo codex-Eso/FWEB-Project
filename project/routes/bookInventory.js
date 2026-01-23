@@ -1,13 +1,19 @@
 import express from "express";
 import BookInventory from "../models/bookInventory.js";
+import Users from "../models/users.js";
+import LibraryBooks from '../models/libraryBooks.js';
+import mongoose from "mongoose";
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
     try {
         const { studentId, viewStatus } = req.query;
+        if (!mongoose.Types.ObjectId.isValid(studentId)) {
+            return res.status(400).json({ error: "Bad user id detected!" })
+        }
         let getBooks;
-        if (viewStatus != undefined) {
+        if (viewStatus != "Viewed") {
             getBooks = await BookInventory.aggregate([
                 { $match: { studentId: studentId } },
                 { $sort: { position: -1 } },
@@ -19,13 +25,24 @@ router.get("/", async (req, res) => {
                 { $sort: { position: -1 } }
             ]);
         }
+        if (getBooks == null || !getBooks || getBooks.length == 0) {
+            return res.status(404).json({ error: "Books not found!" })
+        }
         return res.status(200).json(getBooks);
     } catch (error) {
         console.error(error);
+        return res.status(500).json({ error: "Server Error! Failed to fetch user books!" })
     }
 })
 
 router.get('/:studentId', async (req, res) => {
+    if (!mongoose.Types.ObjectId.isValid(req.params.studentId)) {
+        return res.status(400).json({ error: "Bad user id detected!" })
+    }
+    const user = await Users.findOne({ _id: req.params.studentId });
+    if (user === null) {
+        return res.status(404).json({ error: "User is not found!" })
+    }
     try {
         const bookInventory = await BookInventory.find({ studentId: req.params.studentId });
         let bookPosition = [];
@@ -33,58 +50,74 @@ router.get('/:studentId', async (req, res) => {
         return res.status(200).json(Math.max(...bookPosition));
     } catch (error) {
         console.error(error);
+        return res.status(500).json({ error: "Server Error! Failed to fetch user book position!" })
     }
 })
 
 router.get("/:studentId/:bookId", async (req, res) => {
+    if (!mongoose.Types.ObjectId.isValid(req.params.studentId)) {
+        return res.status(400).json({ error: "Bad user id detected!" })
+    }
+    const user = await Users.findOne({ _id: req.params.studentId });
+    if (user === null) {
+        return res.status(404).json({ error: "User is not found!" })
+    }
+    const libraryBook = await LibraryBooks.findOne({ id: req.params.bookId })
+    if (libraryBook === null || !libraryBook) {
+        return res.status(404).json({ error: "Unknown book id detected!" })
+    }
     try {
         const bookInventory = await BookInventory.findOne({ studentId: req.params.studentId, bookId: req.params.bookId });
         return res.status(200).json(bookInventory);
     } catch (error) {
         console.error(error);
+        return res.status(500).json({ error: "Server Error! Failed to fetch user books!" })
     }
 })
 
 router.patch("/:id", async (req, res) => {
     try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ error: "Unknown user book object id detected!" })
+        }
         const updateInventory = req.body;
-        if (!updateInventory) {
-            throw new Error('Cannot proceed! Empty data given!')
+        if (!updateInventory || Object.keys(updateInventory).length === 0) {
+            return res.status(400).json({ error: 'Cannot proceed! Empty data given!' })
         } else {
-            await BookInventory.findOneAndUpdate(
+            const updatedInventory = await BookInventory.findOneAndUpdate(
                 { _id: req.params.id },
                 { $set: updateInventory }
             )
+            if (!updatedInventory || updatedInventory === null) return res.status(404).json({ error: "User book cannot be found!" })
             return res.status(200).json({ message: "Updated" });
         }
     } catch (error) {
         console.error(error);
+        if (error.name === "ValidationError") return res.status(400).json({ error: 'Cannot proceed! Attribute(s) undefined!' })
+        return res.status(500).json({ error: "Server Error! Failed to update user book!" })
     }
 })
 
 router.post("/", async (req, res) => {
     try {
-        const bookInventory = await BookInventory.findOne({ studentId: req.body.studentId, bookId: req.body.bookId });
-        if (bookInventory === null) {
-            const { studentId, bookId, status, dueDate, position } = req.body;
-            if (studentId === null || bookId === null || status === null || dueDate === null || position === null) {
-                throw new Error('Cannot proceed! There are empty input values!');
-            } else {
-                const newUserBook = new BookInventory({
-                    studentId,
-                    bookId,
-                    status,
-                    dueDate,
-                    position
-                })
-                await newUserBook.save();
-                return res.status(200).json({ message: "Added" });
-            }
+        const { studentId, bookId, status, dueDate, position } = req.body;
+        if (!studentId || !bookId || !status || dueDate == null || !position) {
+            return res.status(400).json({ error: 'Cannot proceed! Empty data given!' });
         } else {
-            return res.json(null);
+            const newUserBook = new BookInventory({
+                studentId,
+                bookId,
+                status,
+                dueDate,
+                position
+            })
+            await newUserBook.save();
+            return res.status(201).json({ message: "Added" });
         }
     } catch (error) {
         console.error(error);
+        if (error.name === "ValidationError") return res.status(400).json({ error: 'Cannot proceed! Attribute(s) undefined!' })
+        return res.status(500).json({ error: "Server Error! Failed to add user book!" })
     }
 })
 

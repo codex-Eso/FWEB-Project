@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
         return res.status(201).json({ message: "Added" });
     } catch (error) {
         console.error(error);
-        if (error.name === "ValidationError") return res.status(400), json({ error: 'Cannot proceed! Attribute(s) undefined!' })
+        if (error.name === "ValidationError") return res.status(400).json({ error: 'Cannot proceed! Attribute(s) undefined!' })
         return res.status(500).json({ error: "Server Error! Failed to add user notification!" })
     }
 })
