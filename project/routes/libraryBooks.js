@@ -2,6 +2,7 @@ import express from "express";
 import multer from "multer";
 import { storage } from "../cloudinary.js";
 import LibraryBooks from '../models/libraryBooks.js'
+import AdminBooks from "../models/adminBooks.js";
 import mongoose from "mongoose";
 
 const router = express.Router();
@@ -85,6 +86,7 @@ router.delete("/:id", async (req, res) => {
             return res.status(404).json({ error: "Book cannot be found!" })
         }
         await LibraryBooks.findOneAndDelete({ _id: id });
+        const book = await AdminBooks.findOneAndDelete({ bookId: library.id });
         return res.status(200).json({ message: "Deleted" });
     } catch (error) {
         console.error(error);

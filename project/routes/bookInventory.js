@@ -75,6 +75,38 @@ router.get("/:studentId/:bookId", async (req, res) => {
     }
 })
 
+router.delete("/:bookId", async (req, res) => {
+    const libraryBook = await LibraryBooks.findOne({ id: req.params.bookId })
+    if (libraryBook === null || !libraryBook) {
+        return res.status(404).json({ error: "Unknown book id detected!" })
+    }
+    try {
+        const bookInventory = await BookInventory.find({ bookId: req.params.bookId });
+        await Promise.all(
+            bookInventory.map(async (userBook) => {
+                var update = { $inc: {} }
+                if (userBook.status == "Borrowed") {
+                    update.$inc.borrowed = -1;
+                } else if (userBook.status == "Requested") {
+                    update.$inc.requested = -1;
+                }
+                await Users.findOneAndUpdate(
+                    { _id: userBook.studentId },
+                    update
+                )
+            })
+        )
+        const bookDeletion = await BookInventory.deleteMany({ bookId: req.params.bookId });
+        if (!bookDeletion || bookDeletion == null) {
+            return res.status(404).json({ error: "Deletion failed!" })
+        }
+        return res.status(200).json({ message: "Deleted" });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Server Error! Failed to fetch user books!" })
+    }
+})
+
 router.patch("/:id", async (req, res) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {

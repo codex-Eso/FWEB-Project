@@ -254,6 +254,9 @@ const BookInfo = () => {
                         try {
                             let bookISBN = book.identifier
                             let bookName = book.title
+                            await fetch(`http://localhost:5000/bookInventory/${book.id}`, {
+                                method: "DELETE"
+                            })
                             await fetch(`http://localhost:5000/libraryBooks/${book._id}`, {
                                 method: "DELETE"
                             })
