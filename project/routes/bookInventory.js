@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
             return res.status(400).json({ error: "Bad user id detected!" })
         }
         let getBooks;
-        if (viewStatus != "Viewed") {
+        if (viewStatus == "Viewed") {
             getBooks = await BookInventory.aggregate([
                 { $match: { studentId: studentId } },
                 { $sort: { position: -1 } },

@@ -122,11 +122,7 @@ const AuditLog = () => {
                 body: JSON.stringify(getUser)
             })
             addAdminLog("accepted", isbn, title);
-            let adminNoti = await fetch(`http://localhost:5000/adminLogs`);
-            adminNoti = await adminNoti.json();
-            //ask Colin
-            adminNoti = adminNoti.slice().reverse().find((n) => n.id == logId);
-            await fetch(`http://localhost:5000/adminLogs/${adminNoti._id}`, {
+            await fetch(`http://localhost:5000/adminLogs/${logId}`, {
                 method: "DELETE"
             })
         } catch (e) {
@@ -165,10 +161,7 @@ const AuditLog = () => {
                 body: JSON.stringify(getUser)
             })
             addAdminLog("cancelled", isbn, title);
-            let adminNoti = await fetch(`http://localhost:5000/adminLogs`);
-            adminNoti = await adminNoti.json();
-            //ask Colin
-            await fetch(`http://localhost:5000/adminLogs/${adminNoti._id}`, {
+            await fetch(`http://localhost:5000/adminLogs/${logId}`, {
                 method: "DELETE"
             })
         } catch (e) {
@@ -191,7 +184,7 @@ const AuditLog = () => {
                 </div>
                 {(!log.readLog && log.actionName !== "requested") ? <img src={Read} type="button" className="ms-auto" width={40} onClick={() => updateLog(log._id)} /> : null}
                 {/*From here, add new parameter of log.id in accept + cancel functions*/}
-                {log.actionName === "requested" ? <Stack gap={4} className="ms-auto" direction="horizontal"><img type="button" onClick={() => { accepted(log.bookISBN, log.bookName, log.userId, log.id); }} src={Accept} width={30} /><img type="button" onClick={() => { cancelled(log.bookISBN, log.bookName, log.userId, log.id); }} src={Cancel} width={30} /></Stack> : null}
+                {log.actionName === "requested" ? <Stack gap={4} className="ms-auto" direction="horizontal"><img type="button" onClick={() => { accepted(log.bookISBN, log.bookName, log.userId, log._id); }} src={Accept} width={30} /><img type="button" onClick={() => { cancelled(log.bookISBN, log.bookName, log.userId, log._id); }} src={Cancel} width={30} /></Stack> : null}
             </div>
         )
     })

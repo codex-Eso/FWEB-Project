@@ -105,10 +105,9 @@ const Inventory = () => {
             let bookInfo = await fetch(`http://localhost:5000/libraryBooks/${id}`)
             bookInfo = await bookInfo.json();
             addAdminLog("cancelled", bookInfo.identifier, bookInfo.title, localStorage.getItem("userId"));
-            let adminNoti = await fetch(`http://localhost:5000/adminLogs`);
+            let action = "requested";
+            let adminNoti = await fetch(`http://localhost:5000/adminLogs?bookISBN=${bookInfo.identifier}&action=${action}&userId=${localStorage.getItem("userId")}`);
             adminNoti = await adminNoti.json();
-            //fix the bug where it deletes the wrong audit log, now it is fixed to delete the previously requested book by the user
-            adminNoti = adminNoti.reverse().find(n => n.userId == localStorage.getItem("userId") && n.actionName == "requested" && n.bookISBN == bookInfo.identifier);
             await fetch(`http://localhost:5000/adminLogs/${adminNoti._id}`, {
                 method: "DELETE"
             })

@@ -6,7 +6,16 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
     try {
-        const adminLogs = await AdminLogs.find();
+        const { bookISBN, action, userId } = req.query
+        let adminLogs;
+        if (bookISBN !== undefined || action !== undefined || userId !== undefined) {
+            adminLogs = await AdminLogs.findOne({ bookISBN: bookISBN, actionName: action, userId: userId });
+            if (adminLogs == null || !adminLogs) {
+                return res.status(404).json({ error: "Admin log not found!" })
+            }
+        } else {
+            adminLogs = await AdminLogs.find();
+        }
         return res.status(200).json(adminLogs);
     } catch (error) {
         console.error(error);
