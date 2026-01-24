@@ -18,109 +18,114 @@ const BookInfo = () => {
     const navigate = useNavigate();
     const hasFetched = useRef(false);
     useEffect(() => {
-        if (hasFetched.current) return;
-        hasFetched.current = true;
-        overflow(false);
-        const userData = async () => {
-            const getUser = await fetch(`http://localhost:5000/users/${localStorage.getItem("userId")}`)
-            if (!getUser.ok) {
-                const errorData = await getUser.json();
-                throw new Error(errorData.error || "Failed to get users! Try again later!");
-            }
-            let user = await getUser.json();
-            setUser(user);
-            return user;
-        }
-        userData();
-        const getBookInfo = async () => {
-            try {
-                const res = await fetch(`http://localhost:5000/libraryBooks/${id}`);
-                if (!res.ok) {
-                    const errorData = await res.json();
-                    throw new Error(errorData.error || "Failed to get book! Try again later!");
+        const fetchData = async () => {
+            if (hasFetched.current) return;
+            hasFetched.current = true;
+            overflow(false);
+            const userData = async () => {
+                const getUser = await fetch(`http://localhost:5000/users/${localStorage.getItem("userId")}`)
+                if (!getUser.ok) {
+                    const errorData = await getUser.json();
+                    throw new Error(errorData.error || "Failed to get users! Try again later!");
                 }
-                let data = await res.json();
-                actualBook(data);
-                return data;
-            } catch (e) {
-                navigate("error");
+                let user = await getUser.json();
+                setUser(user);
+                return user;
             }
-        }
-        getBookInfo()
-        const getUserBooks = async () => {
-            try {
-                if (getRole() === "admin") {
-                    let adminBooks = new Object();
-                    adminBooks.bookId = id
-                    let checkBook = await fetch(`http://localhost:5000/adminBooks/${id}`);
-                    checkBook = await checkBook.json();
-                    if (checkBook.message == "Book Exists!") {
-                        await fetch(`http://localhost:5000/adminBooks/${id}`, {
-                            method: "PATCH"
-                        });
-                    } else {
-                        await fetch(`http://localhost:5000/adminBooks`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(adminBooks)
-                        });
-                    }
-                } else if (getRole() === "student") {
-                    //get the latest position of the book
-                    const pos = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}`)
-                    let getPos = await pos.json();
-                    if (getPos == null) {
-                        getPos = 0;
-                    }
-                    const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}/${id}`);
+            const getBookInfo = async () => {
+                try {
+                    const res = await fetch(`http://localhost:5000/libraryBooks/${id}`);
                     if (!res.ok) {
                         const errorData = await res.json();
-                        throw new Error(errorData.error || "Failed to get books! Try again later!");
+                        throw new Error(errorData.error || "Failed to get book! Try again later!");
                     }
                     let data = await res.json();
-                    let getUser = await userData();
-                    let userUpdate = { ...getUser };
-                    if (data !== null) {
-                        data.position = parseInt(getPos) + 1;
-                        await fetch(`http://localhost:5000/bookInventory/${data._id}`, {
-                            method: "PATCH",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(data)
-                        });
-                        setBookState(data.status);
-                    } else {
-                        setBookState('Viewed');
-                        let userBook = new Object();
-                        userBook.studentId = localStorage.getItem("userId");
-                        userBook.bookId = id;
-                        userBook.status = 'Viewed';
-                        userBook.dueDate = "";
-                        userBook.position = parseInt(getPos) + 1;
-                        await fetch(`http://localhost:5000/bookInventory`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(userBook)
-                        });
-                        const bookData = await getBookInfo();
-                        if (bookData.fiction == true) {
-                            userUpdate.fictionCount = getUser.fictionCount + 1;
-                        } else {
-                            userUpdate.nonFictionCount = getUser.nonFictionCount + 1;
-                        }
-                        await fetch(`http://localhost:5000/users/${userUpdate._id}`, {
-                            method: "PATCH",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(userUpdate)
-                        });
-                    }
-                    setBorrowedCount(userUpdate.borrowed);
-                    setRequestedCount(userUpdate.requested);
+                    actualBook(data);
+                    return data;
+                } catch (e) {
+                    navigate("error");
                 }
-            } catch (e) {
-                console.log(e);
             }
+            await Promise.all([
+                getBookInfo(),
+                userData()
+            ])
+            const getUserBooks = async () => {
+                try {
+                    if (getRole() === "admin") {
+                        let adminBooks = new Object();
+                        adminBooks.bookId = id
+                        let checkBook = await fetch(`http://localhost:5000/adminBooks/${id}`);
+                        checkBook = await checkBook.json();
+                        if (checkBook.message == "Book Exists!") {
+                            await fetch(`http://localhost:5000/adminBooks/${id}`, {
+                                method: "PATCH"
+                            });
+                        } else {
+                            await fetch(`http://localhost:5000/adminBooks`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(adminBooks)
+                            });
+                        }
+                    } else if (getRole() === "student") {
+                        //get the latest position of the book
+                        const pos = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}`)
+                        let getPos = await pos.json();
+                        if (getPos == null) {
+                            getPos = 0;
+                        }
+                        const res = await fetch(`http://localhost:5000/bookInventory/${localStorage.getItem("userId")}/${id}`);
+                        if (!res.ok) {
+                            const errorData = await res.json();
+                            throw new Error(errorData.error || "Failed to get books! Try again later!");
+                        }
+                        let data = await res.json();
+                        let getUser = await userData();
+                        let userUpdate = { ...getUser };
+                        if (data !== null) {
+                            data.position = parseInt(getPos) + 1;
+                            await fetch(`http://localhost:5000/bookInventory/${data._id}`, {
+                                method: "PATCH",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(data)
+                            });
+                            setBookState(data.status);
+                        } else {
+                            setBookState('Viewed');
+                            let userBook = new Object();
+                            userBook.studentId = localStorage.getItem("userId");
+                            userBook.bookId = id;
+                            userBook.status = 'Viewed';
+                            userBook.dueDate = "";
+                            userBook.position = parseInt(getPos) + 1;
+                            await fetch(`http://localhost:5000/bookInventory`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(userBook)
+                            });
+                            const bookData = await getBookInfo();
+                            if (bookData.fiction == true) {
+                                userUpdate.fictionCount = getUser.fictionCount + 1;
+                            } else {
+                                userUpdate.nonFictionCount = getUser.nonFictionCount + 1;
+                            }
+                            await fetch(`http://localhost:5000/users/${userUpdate._id}`, {
+                                method: "PATCH",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(userUpdate)
+                            });
+                        }
+                        setBorrowedCount(userUpdate.borrowed);
+                        setRequestedCount(userUpdate.requested);
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+            getUserBooks();
         }
-        getUserBooks();
+        fetchData();
     }, [])
     const action = (getAction) => {
         if (getRole() === "student") {
