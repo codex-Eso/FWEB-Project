@@ -39,7 +39,7 @@ const NavStudent = () => {
             }
         }
         notifications();
-    }, [notification])
+    })
     const navToBook = (id) => {
         navigate(`/student/book/${id}`);
         document.getElementById("notification").style.textDecoration = "none";

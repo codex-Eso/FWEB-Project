@@ -33,6 +33,7 @@ const Authentication = () => {
             //since the admin has only 1 shared account, I just check if it equals to the credentials for the very first array
             if (user.adminNo === "AdminUser2025" && user.password === "Admin_is_user_2025") {
                 localStorage.setItem("loginRole", "admin");
+                localStorage.setItem("userId", u._id);
                 loggedIn = true;
                 navigate("/admin");
                 return
